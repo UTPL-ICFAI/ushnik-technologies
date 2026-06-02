@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
@@ -23,8 +24,15 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="font-heading font-bold text-xl sm:text-2xl text-brand-black tracking-tight">
-              Ushnik Technologies<span className="text-brand-red">.</span>
+            <Link href="/">
+              <Image 
+                src="/logo.png" 
+                alt="Ushnik Technologies Logo" 
+                width={200} 
+                height={55} 
+                className="h-10 sm:h-12 w-auto object-contain"
+                priority
+              />
             </Link>
           </div>
 

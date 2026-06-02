@@ -17,6 +17,21 @@ const roboto = Roboto({
 export const metadata = {
   title: "Ushnik Technologies Pvt. Ltd. | Strategic Technology Partner",
   description: "Strategic Technology & Infrastructure Partner for the Evolving Digital Economy",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
+  openGraph: {
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Ushnik Technologies Logo",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {
