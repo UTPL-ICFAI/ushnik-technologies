@@ -1,6 +1,4 @@
 import { Inter, Roboto } from "next/font/google";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,14 +16,14 @@ export const metadata = {
   title: "Ushnik Technologies Pvt. Ltd. | Strategic Technology Partner",
   description: "Strategic Technology & Infrastructure Partner for the Evolving Digital Economy",
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: "/logo 2.png",
+    shortcut: "/logo 2.png",
+    apple: "/logo 2.png",
   },
   openGraph: {
     images: [
       {
-        url: "/logo.png",
+        url: "/logo 2.png",
         width: 1200,
         height: 630,
         alt: "Ushnik Technologies Logo",
@@ -41,11 +39,7 @@ export default function RootLayout({ children }) {
       className={`${inter.variable} ${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-body bg-brand-white text-brand-black">
-        <Navbar />
-        <main className="flex-1 flex flex-col">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

@@ -2,16 +2,29 @@
 
 import { useState } from "react";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { submitAssessmentForm } from "./actions";
 
 export default function AssessmentForm() {
   const [requirementType, setRequirementType] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Placeholder for EmailJS or Webhook integration
-    console.log("Form Submitted");
-    setIsSubmitted(true);
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData(e.target);
+    const result = await submitAssessmentForm(formData);
+
+    if (result.success) {
+      setIsSubmitted(true);
+      window.scrollTo(0, 0);
+    } else {
+      setError(result.error || "Failed to submit assessment.");
+    }
+    setLoading(false);
   };
 
   if (isSubmitted) {
@@ -50,6 +63,12 @@ export default function AssessmentForm() {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
           <form onSubmit={handleSubmit} className="p-8 sm:p-10">
+            
+            {error && (
+              <div className="mb-6 bg-red-50 text-red-800 p-4 rounded-md border border-red-200">
+                {error}
+              </div>
+            )}
             
             {/* ENTRY QUESTION */}
             <div className="mb-10">
@@ -93,7 +112,7 @@ export default function AssessmentForm() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {["AWS", "Microsoft Azure", "Google Cloud (GCP)", "Oracle Cloud", "DigitalOcean", "Colocation / Data Center", "On-Premise", "Other"].map(opt => (
                       <label key={opt} className="flex items-center">
-                        <input type="checkbox" className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
+                        <input type="checkbox" name="providers" value={opt} className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
                         <span className="text-sm text-gray-700">{opt}</span>
                       </label>
                     ))}
@@ -105,7 +124,7 @@ export default function AssessmentForm() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {["Public Cloud", "Private Cloud", "Hybrid Cloud", "On-Premise", "Colocation", "VPS", "Bare Metal"].map(opt => (
                       <label key={opt} className="flex items-center">
-                        <input type="checkbox" className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
+                        <input type="checkbox" name="deployment_models" value={opt} className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
                         <span className="text-sm text-gray-700">{opt}</span>
                       </label>
                     ))}
@@ -117,7 +136,7 @@ export default function AssessmentForm() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {["High monthly cost", "Poor performance / latency", "Frequent downtime", "No DR / backup solution", "Lack of scalability", "Security / compliance concerns"].map(opt => (
                       <label key={opt} className="flex items-center">
-                        <input type="checkbox" className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
+                        <input type="checkbox" name="pain_points" value={opt} className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
                         <span className="text-sm text-gray-700">{opt}</span>
                       </label>
                     ))}
@@ -126,7 +145,7 @@ export default function AssessmentForm() {
 
                 <div>
                   <label className="block font-medium text-gray-800 mb-3">A4. Current Monthly Infrastructure Spend</label>
-                  <select className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red">
+                  <select name="monthly_spend" className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red">
                     <option value="">Select Range</option>
                     <option>{"<"} ₹25,000</option>
                     <option>₹25,000–₹1L</option>
@@ -148,7 +167,7 @@ export default function AssessmentForm() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {["Website / Web App", "SaaS Platform", "Mobile App Backend", "AI / ML Workloads", "ERP / CRM", "Video / Streaming", "Data Storage", "Not Sure Yet"].map(opt => (
                       <label key={opt} className="flex items-center">
-                        <input type="checkbox" className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
+                        <input type="checkbox" name="workloads" value={opt} className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
                         <span className="text-sm text-gray-700">{opt}</span>
                       </label>
                     ))}
@@ -157,7 +176,7 @@ export default function AssessmentForm() {
 
                 <div>
                   <label className="block font-medium text-gray-800 mb-3">B2. Expected Number of Users</label>
-                  <select className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red">
+                  <select name="expected_users" className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red">
                     <option value="">Select Range</option>
                     <option>{"<"} 100</option>
                     <option>100–1,000</option>
@@ -172,7 +191,7 @@ export default function AssessmentForm() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {["Infrastructure Architecture / HLD", "Cloud Setup", "Colocation Setup", "Backup & DR Planning", "Network Architecture", "Security Design"].map(opt => (
                       <label key={opt} className="flex items-center">
-                        <input type="checkbox" className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
+                        <input type="checkbox" name="support_needed" value={opt} className="rounded text-brand-red focus:ring-brand-red border-gray-300 mr-2" />
                         <span className="text-sm text-gray-700">{opt}</span>
                       </label>
                     ))}
@@ -189,27 +208,27 @@ export default function AssessmentForm() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Full Name <span className="text-brand-red">*</span></label>
-                      <input type="text" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
+                      <input type="text" name="fullName" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Company Name <span className="text-brand-red">*</span></label>
-                      <input type="text" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
+                      <input type="text" name="companyName" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Email Address <span className="text-brand-red">*</span></label>
-                      <input type="email" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
+                      <input type="email" name="email" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number <span className="text-brand-red">*</span></label>
-                      <input type="tel" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
+                      <input type="tel" name="phone" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Designation</label>
-                      <input type="text" className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
+                      <input type="text" name="designation" className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">City / Location <span className="text-brand-red">*</span></label>
-                      <input type="text" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
+                      <input type="text" name="location" required className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
                     </div>
                   </div>
                 </div>
@@ -231,9 +250,10 @@ export default function AssessmentForm() {
                 <div className="text-center">
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center px-10 py-4 text-lg font-bold rounded-md text-white bg-brand-red hover:bg-red-700 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
+                    disabled={loading}
+                    className="inline-flex items-center justify-center px-10 py-4 text-lg font-bold rounded-md text-white bg-brand-red hover:bg-red-700 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto disabled:opacity-50"
                   >
-                    Submit Assessment Request <ArrowRight className="ml-2 h-5 w-5" />
+                    {loading ? "Submitting..." : "Submit Assessment Request"} {!loading && <ArrowRight className="ml-2 h-5 w-5" />}
                   </button>
                 </div>
               </>

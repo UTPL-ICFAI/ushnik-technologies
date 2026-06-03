@@ -1,17 +1,29 @@
 import Link from "next/link";
 import { Server, Code, ArrowRight, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+
+  const { data: heroData } = await supabase
+    .from('hero_sections')
+    .select('*')
+    .eq('page_route', '/')
+    .single();
+
+  const heading = heroData?.heading || "Strategic Technology & Infrastructure Partner for the Evolving Digital Economy";
+  const subheading = heroData?.subheading || "Connecting enterprises, cloud ecosystems, and technology partners to unlock scalable growth opportunities across infrastructure, software, and digital services.";
+
   return (
     <>
       {/* HERO SECTION - TAGLINE */}
       <section className="bg-brand-black text-white pt-20 pb-16 lg:pt-28 lg:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-tight sm:leading-tight md:leading-tight lg:leading-tight text-balance">
-            Strategic Technology & Infrastructure Partner for the Evolving Digital Economy
+            {heading}
           </h1>
           <p className="mt-4 text-xl text-gray-400 max-w-3xl mx-auto font-body">
-            Connecting enterprises, cloud ecosystems, and technology partners to unlock scalable growth opportunities across infrastructure, software, and digital services.
+            {subheading}
           </p>
         </div>
       </section>

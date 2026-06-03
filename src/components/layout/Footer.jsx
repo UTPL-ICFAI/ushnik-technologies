@@ -1,35 +1,43 @@
 import Link from "next/link";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/server";
 
-export default function Footer() {
+export default async function Footer() {
+  const supabase = await createClient();
+
+  const { data: settings } = await supabase
+    .from('global_settings')
+    .select('*')
+    .single();
+
   return (
     <footer className="bg-brand-black text-gray-300 py-12 lg:py-16 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-          
+
           {/* Column 1: Company */}
           <div className="space-y-4">
             <Link href="/" className="inline-block mb-2">
-              <Image 
-                src="/logo.png" 
-                alt="Ushnik Technologies Logo" 
-                width={180} 
-                height={50} 
-                className="h-10 w-auto object-contain" 
+              <Image
+                src="/logo 2.png"
+                alt="Ushnik Technologies Logo"
+                width={180}
+                height={50}
+                className="h-10 w-auto object-contain"
               />
             </Link>
             <p className="text-sm text-gray-400">
-              Strategic Technology & Infrastructure Partner
+              {settings?.tagline || "Strategic Technology & Infrastructure Partner"}
             </p>
             <div className="pt-4 space-y-2 text-sm">
               <p>
-                <a href="mailto:contact@ushniktechnologies.com" className="hover:text-brand-red transition-colors">
-                  contact@ushniktechnologies.com
+                <a href={`mailto:${settings?.contact_email || "contact@ushniktechnologies.com"}`} className="hover:text-brand-red transition-colors">
+                  {settings?.contact_email || "contact@ushniktechnologies.com"}
                 </a>
               </p>
               <p>
-                <a href="tel:+917702901217" className="hover:text-brand-red transition-colors">
-                  +91 77029 01217
+                <a href={`tel:${settings?.contact_phone?.replace(/\s+/g, '') || "+917702901217"}`} className="hover:text-brand-red transition-colors">
+                  {settings?.contact_phone || "+91 77029 01217"}
                 </a>
               </p>
               <p>
@@ -77,11 +85,11 @@ export default function Footer() {
               <li><Link href="/contact" className="hover:text-brand-red transition-colors">Contact</Link></li>
             </ul>
           </div>
-          
+
         </div>
-        
+
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col lg:flex-row justify-between items-center text-sm text-gray-500 gap-4">
-          <p>© 2025 Ushnik Technologies Pvt. Ltd. All Rights Reserved.</p>
+          <p>{settings?.footer_text || "© 2025 Ushnik Technologies Pvt. Ltd. All Rights Reserved."}</p>
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center">
             <Link href="/privacy" className="hover:text-brand-red transition-colors">Privacy Policy</Link>
             <span className="hidden sm:inline">|</span>

@@ -25,11 +25,11 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/">
-              <Image 
-                src="/logo.png" 
-                alt="Ushnik Technologies Logo" 
-                width={200} 
-                height={55} 
+              <Image
+                src="/logo 1.png"
+                alt="Ushnik Technologies Logo"
+                width={200}
+                height={55}
                 className="h-10 sm:h-12 w-auto object-contain"
                 priority
               />

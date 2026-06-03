@@ -1,11 +1,16 @@
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import ContactForm from "./ContactForm";
 
 export const metadata = {
   title: "Contact Us | Ushnik Technologies",
   description: "Get in touch with Ushnik Technologies for your infrastructure and software needs.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const supabase = await createClient();
+  const { data: settings } = await supabase.from('global_settings').select('*').single();
+
   return (
     <div className="bg-brand-gray min-h-screen pb-20">
       {/* HEADER */}
@@ -27,14 +32,14 @@ export default function ContactPage() {
                 <Mail className="h-6 w-6 text-brand-red mr-4 mt-1" />
                 <div>
                   <p className="font-semibold mb-1">Email</p>
-                  <a href="mailto:contact@ushniktechnologies.com" className="text-gray-400 hover:text-white transition-colors">contact@ushniktechnologies.com</a>
+                  <a href={`mailto:${settings?.contact_email || "contact@ushniktechnologies.com"}`} className="text-gray-400 hover:text-white transition-colors">{settings?.contact_email || "contact@ushniktechnologies.com"}</a>
                 </div>
               </div>
               <div className="flex items-start">
                 <Phone className="h-6 w-6 text-brand-red mr-4 mt-1" />
                 <div>
                   <p className="font-semibold mb-1">Phone / WhatsApp</p>
-                  <a href="tel:+917702901217" className="text-gray-400 hover:text-white transition-colors">+91 77029 01217</a>
+                  <a href={`tel:${settings?.contact_phone?.replace(/\s+/g, '') || "+917702901217"}`} className="text-gray-400 hover:text-white transition-colors">{settings?.contact_phone || "+91 77029 01217"}</a>
                 </div>
               </div>
               <div className="flex items-start">
@@ -63,35 +68,7 @@ export default function ContactPage() {
           {/* CONTACT FORM */}
           <div className="lg:w-2/3 p-10 lg:p-12">
             <h2 className="text-2xl font-heading font-bold text-brand-black mb-6">Send us a message</h2>
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <input type="text" className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                  <input type="email" className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" required />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Company Name (Optional)</label>
-                <input type="text" className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                <input type="text" className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" required />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                <textarea rows={5} className="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-red focus:ring-brand-red" required></textarea>
-              </div>
-              <div>
-                <button type="submit" className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-brand-red hover:bg-red-700 transition-colors shadow-md hover:shadow-lg">
-                  Send Message <Send className="ml-2 h-4 w-4" />
-                </button>
-              </div>
-            </form>
+            <ContactForm />
           </div>
 
         </div>
