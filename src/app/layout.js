@@ -16,14 +16,14 @@ export const metadata = {
   title: "Ushnik Technologies Pvt. Ltd. | Strategic Technology Partner",
   description: "Strategic Technology & Infrastructure Partner for the Evolving Digital Economy",
   icons: {
-    icon: "/logo 2.png",
-    shortcut: "/logo 2.png",
-    apple: "/logo 2.png",
+    icon: "/logo-2.png",
+    shortcut: "/logo-2.png",
+    apple: "/logo-2.png",
   },
   openGraph: {
     images: [
       {
-        url: "/logo 2.png",
+        url: "/logo-2.png",
         width: 1200,
         height: 630,
         alt: "Ushnik Technologies Logo",

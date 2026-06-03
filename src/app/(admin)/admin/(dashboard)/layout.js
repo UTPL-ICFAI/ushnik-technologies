@@ -14,11 +14,11 @@ export default async function AdminLayout({ children }) {
         <div className="p-6 border-b border-gray-800">
           <Link href="/admin" className="block mb-2">
             <Image
-              src="/logo 2.png"
+              src="/logo-2.png"
               alt="Ushnik Technologies"
               width={120}
               height={30}
-              className="object-contain brightness-0 invert"
+              className="object-contain"
               priority
             />
           </Link>
@@ -64,7 +64,7 @@ export default async function AdminLayout({ children }) {
         <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center px-8 md:hidden">
           <Link href="/admin">
             <Image
-              src="/Logo 1.png"
+              src="/logo-1.png"
               alt="Ushnik Technologies"
               width={120}
               height={35}

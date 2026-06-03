@@ -17,13 +17,13 @@ export default async function Footer() {
 
           {/* Column 1: Company */}
           <div className="space-y-4">
-            <Link href="/" className="inline-block mb-2">
+            <Link href="/" className="inline-block mb-6">
               <Image
-                src="/logo 2.png"
+                src="/logo-2.png"
                 alt="Ushnik Technologies Logo"
-                width={180}
-                height={50}
-                className="h-10 w-auto object-contain"
+                width={400}
+                height={120}
+                className="h-16 sm:h-20 w-auto object-contain"
               />
             </Link>
             <p className="text-sm text-gray-400">

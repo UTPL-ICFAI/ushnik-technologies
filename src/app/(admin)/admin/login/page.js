@@ -36,7 +36,7 @@ export default function AdminLogin() {
       <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full border border-gray-200">
         <div className="text-center mb-8 flex flex-col items-center">
           <Image
-            src="/logo 1.png"
+            src="/logo-1.png"
             alt="Ushnik Technologies"
             width={180}
             height={50}
