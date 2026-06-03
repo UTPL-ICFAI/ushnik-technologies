@@ -64,7 +64,7 @@ export default async function AdminLayout({ children }) {
         <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center px-8 md:hidden">
           <Link href="/admin">
             <Image
-              src="/logo.png"
+              src="/Logo 1.png"
               alt="Ushnik Technologies"
               width={120}
               height={35}
