@@ -3,8 +3,15 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
+export async function requireAuth(supabase) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+  return user;
+}
+
 export async function updateService(formData) {
   const supabase = await createClient();
+  await requireAuth(supabase);
 
   const id = formData.get("id");
   
@@ -38,6 +45,7 @@ export async function updateService(formData) {
 
 export async function deleteService(id) {
   const supabase = await createClient();
+  await requireAuth(supabase);
 
   const { error } = await supabase
     .from("services")
@@ -54,6 +62,7 @@ export async function deleteService(id) {
 
 export async function insertService(formData) {
   const supabase = await createClient();
+  await requireAuth(supabase);
 
   const rawBullets = formData.get("bullet_points") || "";
   const bullet_points = rawBullets

@@ -38,10 +38,24 @@ export default async function InfrastructurePage() {
   return (
     <div className="bg-brand-gray min-h-screen">
       {/* PAGE HERO */}
-      <section className="bg-brand-black text-white py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative bg-brand-black text-white py-24 lg:py-32 overflow-hidden flex items-center justify-center min-h-[40vh]">
+        {heroData?.is_video && heroData?.video_url && (
+          <>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover z-0"
+              src={heroData.video_url}
+            />
+            {/* Dark overlay for text readability */}
+            <div className="absolute inset-0 bg-black/60 z-0"></div>
+          </>
+        )}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
-          <p className="text-lg lg:text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg lg:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
             {subheading}
           </p>
         </div>

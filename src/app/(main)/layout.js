@@ -1,14 +1,16 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import ChatbotWidget from "@/components/chat/ChatbotWidget";
 
 export default function MainLayout({ children }) {
   return (
     <>
       <Navbar />
-      <main className="flex-1 flex flex-col">
+      <div className="flex-1">
         {children}
-      </main>
+      </div>
       <Footer />
+      <ChatbotWidget />
     </>
   );
 }

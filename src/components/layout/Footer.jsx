@@ -45,6 +45,23 @@ export default async function Footer() {
                   www.ushniktechnologies.com
                 </a>
               </p>
+              <p className="mt-4 flex items-start gap-2">
+                <span className="text-gray-500">📍</span>
+                <span>{settings?.office_address || "8-2-269/3, Plot No: 3, 2nd Floor, Maharshi House, Banjara Hills Road No.2, Hyderabad, Telangana 500034"}</span>
+              </p>
+            </div>
+            
+            <div className="pt-4 flex items-center space-x-4">
+              {settings?.linkedin_url && (
+                <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-red transition-colors">
+                  LinkedIn
+                </a>
+              )}
+              {settings?.twitter_url && (
+                <a href={settings.twitter_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-red transition-colors">
+                  Twitter
+                </a>
+              )}
             </div>
           </div>
 

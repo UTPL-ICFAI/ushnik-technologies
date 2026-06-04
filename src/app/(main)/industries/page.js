@@ -1,103 +1,55 @@
 import Link from "next/link";
-import { Briefcase, Building, ShoppingCart, Activity, ShieldCheck, HeartPulse, GraduationCap, Zap } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import * as LucideIcons from "lucide-react";
 
-export const metadata = {
-  title: "Industries We Serve | Ushnik Technologies",
-  description: "Ushnik Technologies serves enterprises and startups across all major industry verticals with customized hardware and software solutions.",
-};
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
-const INDUSTRIES = [
-  {
-    name: "Banking, Financial Services & Insurance (BFSI)",
-    icon: <Briefcase className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Secure cloud infrastructure, DR solutions, compliance consulting, core banking software support, cybersecurity."
-  },
-  {
-    name: "Healthcare & Life Sciences",
-    icon: <HeartPulse className="h-8 w-8 text-brand-red mb-4" />,
-    description: "HIPAA-aligned infrastructure, hospital management systems, telemedicine platforms, data security."
-  },
-  {
-    name: "Manufacturing & Industrial",
-    icon: <Building className="h-8 w-8 text-brand-red mb-4" />,
-    description: "ERP implementation, OT/IT convergence, plant connectivity, industrial IoT infrastructure, logistics software."
-  },
-  {
-    name: "Retail & E-Commerce",
-    icon: <ShoppingCart className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Scalable cloud infrastructure, e-commerce platform development, CDN optimization, omnichannel solutions."
-  },
-  {
-    name: "Telecommunications & ISPs",
-    icon: <ShieldCheck className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Network infrastructure advisory, carrier interconnection, IXP peering, colocation, DC partnerships."
-  },
-  {
-    name: "IT & Technology Companies",
-    icon: <Activity className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Cloud cost optimization, DevOps setup, SaaS infrastructure, co-location, managed services."
-  },
-  {
-    name: "Government & Public Sector",
-    icon: <ShieldCheck className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Secure data center solutions, NIC connectivity, e-governance platform support, compliance frameworks."
-  },
-  {
-    name: "Education & EdTech",
-    icon: <GraduationCap className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Learning management systems, scalable cloud hosting, video streaming infrastructure, student platforms."
-  },
-  {
-    name: "Logistics & Supply Chain",
-    icon: <Building className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Fleet management software, real-time tracking platforms, warehouse management systems, cloud hosting."
-  },
-  {
-    name: "Energy & Utilities",
-    icon: <Zap className="h-8 w-8 text-brand-red mb-4" />,
-    description: "SCADA system support, infrastructure resilience, backup & DR, industrial network design."
-  },
-  {
-    name: "Real Estate & Construction",
-    icon: <Building className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Property management software, BIM integration, smart building infrastructure, project management tools."
-  },
-  {
-    name: "Media & Entertainment",
-    icon: <Activity className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Video streaming infrastructure, content delivery (CDN), OTT platform development, storage solutions."
-  },
-  {
-    name: "Startups & New Businesses",
-    icon: <Briefcase className="h-8 w-8 text-brand-red mb-4" />,
-    description: "MVP development, affordable cloud setup, infrastructure planning from scratch, product development."
-  },
-  {
-    name: "Hair, Beauty & Lifestyle",
-    icon: <HeartPulse className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Product development platforms, e-commerce websites, brand tech solutions, inventory management."
-  },
-  {
-    name: "Professional Services",
-    icon: <Briefcase className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Document management systems, secure hosting, client portal development, compliance tools."
-  },
-  {
-    name: "Hospitality & Tourism",
-    icon: <ShoppingCart className="h-8 w-8 text-brand-red mb-4" />,
-    description: "Booking platform development, property management software, cloud hosting, guest experience apps."
-  }
-];
+// Dynamic Icon Renderer
+function DynamicIcon({ name, className }) {
+  const IconComponent = LucideIcons[name] || LucideIcons.Briefcase;
+  return <IconComponent className={className} />;
+}
 
-export default function IndustriesPage() {
+export default async function IndustriesPage() {
+  const supabase = await createClient();
+
+  const { data: heroData } = await supabase
+    .from('hero_sections')
+    .select('*')
+    .eq('page_route', '/industries')
+    .single();
+
+  const { data: industries } = await supabase
+    .from('industries')
+    .select('*')
+    .order('order_index', { ascending: true });
+
+  const heading = heroData?.heading || "Industries We Serve";
+  const subheading = heroData?.subheading || "Ushnik Technologies serves enterprises, startups, and new business setups across hardware and software requirements — supporting organizations at every stage of their technology journey across all major industry verticals.";
+
   return (
     <div className="bg-brand-gray min-h-screen pb-20">
       {/* PAGE HERO */}
-      <section className="bg-brand-black text-white py-16 text-center px-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">Industries We Serve</h1>
-          <p className="text-lg lg:text-xl text-gray-400 leading-relaxed">
-            Ushnik Technologies serves enterprises, startups, and new business setups across hardware and software requirements — supporting organizations at every stage of their technology journey across all major industry verticals.
+      <section className="relative bg-brand-black text-white pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden text-center px-4">
+        {heroData?.is_video && heroData?.video_url ? (
+          <>
+            <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0" src={heroData.video_url} />
+            <div className="absolute inset-0 bg-black/60 z-0"></div>
+          </>
+        ) : (
+          heroData?.fallback_image && (
+            <>
+              <img src={heroData.fallback_image} alt="" className="absolute inset-0 w-full h-full object-cover z-0 opacity-40" />
+              <div className="absolute inset-0 bg-black/50 z-0"></div>
+            </>
+          )
+        )}
+        <div className="max-w-4xl mx-auto relative z-10">
+          <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
+          <p className="text-lg lg:text-xl text-gray-400 leading-relaxed whitespace-pre-line">
+            {subheading}
           </p>
         </div>
       </section>
@@ -105,9 +57,9 @@ export default function IndustriesPage() {
       {/* GRID SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {INDUSTRIES.map((ind, index) => (
-            <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:border-brand-red hover:shadow-md transition-all group">
-              {ind.icon}
+          {industries?.map((ind) => (
+            <div key={ind.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:border-brand-red hover:shadow-md transition-all group">
+              <DynamicIcon name={ind.icon_name} className="h-8 w-8 text-brand-red mb-4" />
               <h3 className="text-lg font-bold text-brand-black mb-3">{ind.name}</h3>
               <p className="text-sm text-gray-600 leading-relaxed group-hover:text-gray-800 transition-colors">
                 {ind.description}

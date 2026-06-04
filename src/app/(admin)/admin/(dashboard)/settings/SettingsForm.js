@@ -53,7 +53,7 @@ export default function SettingsForm({ initialData }) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
           <input
@@ -69,6 +69,37 @@ export default function SettingsForm({ initialData }) {
             type="text"
             name="contact_phone"
             defaultValue={initialData?.contact_phone}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Office Address</label>
+        <textarea
+          name="office_address"
+          defaultValue={initialData?.office_address}
+          rows={3}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
+          <input
+            type="url"
+            name="linkedin_url"
+            defaultValue={initialData?.linkedin_url}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Twitter URL</label>
+          <input
+            type="url"
+            name="twitter_url"
+            defaultValue={initialData?.twitter_url}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none"
           />
         </div>

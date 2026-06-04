@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${inter.variable} ${roboto.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-body bg-brand-white text-brand-black">
+      <body suppressHydrationWarning className="min-h-full flex flex-col font-body bg-brand-white text-brand-black">
         {children}
       </body>
     </html>

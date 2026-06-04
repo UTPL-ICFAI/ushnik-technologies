@@ -46,7 +46,7 @@ export default async function ContactPage() {
                 <MapPin className="h-6 w-6 text-brand-red mr-4 mt-1" />
                 <div>
                   <p className="font-semibold mb-1">Registered Office</p>
-                  <p className="text-gray-400 leading-relaxed">[EDIT — Add full registered office address]</p>
+                  <p className="text-gray-400 leading-relaxed">{settings?.office_address || "8-2-269/3, Plot No: 3, 2nd Floor, Maharshi House, Banjara Hills Road No.2, Hyderabad, Telangana 500034"}</p>
                 </div>
               </div>
               <div className="flex items-start">
@@ -59,9 +59,13 @@ export default async function ContactPage() {
             </div>
             
             <div className="mt-12 pt-8 border-t border-gray-800">
-              <a href="#" className="inline-flex items-center text-brand-red hover:text-white transition-colors font-medium">
-                Follow us on LinkedIn
-              </a>
+              {settings?.linkedin_url ? (
+                <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-brand-red hover:text-white transition-colors font-medium">
+                  Follow us on LinkedIn
+                </a>
+              ) : (
+                <span className="inline-flex items-center text-gray-500 font-medium">Connect with us on LinkedIn</span>
+              )}
             </div>
           </div>
 

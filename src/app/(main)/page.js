@@ -1,6 +1,18 @@
 import Link from "next/link";
-import { Server, Code, ArrowRight, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Server, Code, ArrowRight, CheckCircle2 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+
+// Dynamic Icon Renderer
+function DynamicIcon({ name, className }) {
+  const IconComponent = LucideIcons[name];
+  if (!IconComponent) return null;
+  return <IconComponent className={className} />;
+}
 
 export default async function Home() {
   const supabase = await createClient();
@@ -11,25 +23,56 @@ export default async function Home() {
     .eq('page_route', '/')
     .single();
 
+  const { data: stats } = await supabase.from('homepage_statistics').select('*').order('order_index', { ascending: true });
+  const { data: capabilities } = await supabase.from('capabilities').select('*').order('order_index', { ascending: true });
+  const { data: features } = await supabase.from('why_partner_features').select('*').order('order_index', { ascending: true });
+  const { data: sectionConfigs } = await supabase.from('homepage_sections_config').select('*');
+
+  const getVisibility = (id) => sectionConfigs?.find(s => s.section_id === id)?.is_visible ?? true;
+
   const heading = heroData?.heading || "Strategic Technology & Infrastructure Partner for the Evolving Digital Economy";
   const subheading = heroData?.subheading || "Connecting enterprises, cloud ecosystems, and technology partners to unlock scalable growth opportunities across infrastructure, software, and digital services.";
 
   return (
     <>
-      {/* HERO SECTION - TAGLINE */}
-      <section className="bg-brand-black text-white pt-20 pb-16 lg:pt-28 lg:pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* HERO SECTION - TAGLINE & VIDEO */}
+      <section className="relative bg-brand-black text-white pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden flex items-center justify-center min-h-[60vh]">
+        {heroData?.is_video && heroData?.video_url ? (
+          <>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover z-0"
+              src={heroData.video_url}
+            />
+            <div className="absolute inset-0 bg-black/60 z-0"></div>
+          </>
+        ) : (
+          <>
+            <div 
+              className="absolute inset-0 w-full h-full bg-cover bg-center z-0"
+              style={{ backgroundImage: `url(${heroData?.fallback_image_url || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop'})` }}
+            ></div>
+            <div className="absolute inset-0 bg-black/70 z-0"></div>
+          </>
+        )}
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-tight sm:leading-tight md:leading-tight lg:leading-tight text-balance">
             {heading}
           </h1>
-          <p className="mt-4 text-xl text-gray-400 max-w-3xl mx-auto font-body">
+          <p className="mt-4 text-xl text-gray-300 max-w-3xl mx-auto font-body">
             {subheading}
           </p>
         </div>
       </section>
 
-      {/* FULL WIDTH SPLIT SCREEN - TWO DIVISIONS */}
-      <section className="flex flex-col lg:flex-row w-full min-h-[50vh]">
+      {getVisibility('split_services') && (
+      <>
+        {/* FULL WIDTH SPLIT SCREEN - TWO DIVISIONS */}
+        <section className="flex flex-col lg:flex-row w-full min-h-[50vh]">
         {/* Left Card: Infrastructure */}
         <Link 
           href="/infrastructure" 
@@ -66,37 +109,31 @@ export default async function Home() {
           </span>
         </Link>
       </section>
+      </>
+      )}
 
-      {/* TRUST BAR */}
-      <section className="bg-brand-gray py-8 border-y border-gray-200">
+      {getVisibility('trust_bar') && (
+      <>
+        {/* TRUST BAR */}
+        <section className="bg-brand-gray py-8 border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center divide-x divide-gray-300">
-            <div className="px-4">
-              <p className="text-3xl font-bold text-brand-black">10+ Years</p>
-              <p className="text-sm font-medium text-gray-500 mt-1 uppercase tracking-wider">Industry Experience</p>
-            </div>
-            <div className="px-4 border-l-0 md:border-l">
-              <p className="text-3xl font-bold text-brand-black">50+ Clients</p>
-              <p className="text-sm font-medium text-gray-500 mt-1 uppercase tracking-wider">Enterprises Served</p>
-            </div>
-            <div className="px-4">
-              <p className="text-3xl font-bold text-brand-black">20+ Partners</p>
-              <p className="text-sm font-medium text-gray-500 mt-1 uppercase tracking-wider">DC & Cloud Partners</p>
-            </div>
-            <div className="px-4 border-l-0 md:border-l">
-              <p className="text-3xl font-bold text-brand-black">Pan-India</p>
-              <p className="text-sm font-medium text-gray-500 mt-1 uppercase tracking-wider">Service Coverage</p>
-            </div>
-            <div className="px-4 col-span-2 md:col-span-1 border-l-0 md:border-l">
-              <p className="text-3xl font-bold text-brand-black">Global Reach</p>
-              <p className="text-sm font-medium text-gray-500 mt-1 uppercase tracking-wider">Collaborations</p>
-            </div>
+            {stats?.map((stat, idx) => (
+              <div key={stat.id} className={`px-4 ${idx > 0 && idx % 2 !== 0 ? 'border-l-0 md:border-l' : idx > 0 ? 'border-l-0 md:border-l' : ''} ${idx === 4 ? 'col-span-2 md:col-span-1' : ''}`}>
+                <p className="text-3xl font-bold text-brand-black">{stat.value}</p>
+                <p className="text-sm font-medium text-gray-500 mt-1 uppercase tracking-wider">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
+      </>
+      )}
 
-      {/* WHAT WE ENABLE SECTION */}
-      <section className="py-20 lg:py-28 bg-white">
+      {getVisibility('capabilities') && (
+      <>
+        {/* WHAT WE ENABLE SECTION */}
+        <section className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-brand-red font-bold tracking-wide uppercase text-sm mb-2">Capabilities</h2>
@@ -104,46 +141,25 @@ export default async function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {[
-              {
-                title: "Global Business Collaborations",
-                desc: "Facilitating strategic partnerships between enterprises, technology providers, and data center operators worldwide."
-              },
-              {
-                title: "Enterprise & Client Connects",
-                desc: "Bridging the gap between infrastructure needs and the right technology partners for seamless delivery."
-              },
-              {
-                title: "Strategic Partnership Opportunities",
-                desc: "Creating joint venture, colocation, and distribution partnerships across the cloud and data center ecosystem."
-              },
-              {
-                title: "Data Center Expansion Enablement",
-                desc: "Supporting greenfield DC projects from feasibility studies and DPR preparation to partner ecosystem introduction."
-              },
-              {
-                title: "Cloud, AI & Digital Infrastructure",
-                desc: "Advisory and implementation support for cloud migration, AI infrastructure planning, and digital transformation."
-              },
-              {
-                title: "Technology & Industry Networking",
-                desc: "Building meaningful connections across the global digital infrastructure landscape for long-term business growth."
-              }
-            ].map((capability, idx) => (
-              <div key={idx} className="bg-brand-gray p-8 rounded-xl border border-gray-200 hover:border-brand-red transition-colors group">
-                <ShieldCheck className="h-10 w-10 text-brand-red mb-5 group-hover:scale-110 transition-transform" />
+            {capabilities?.map((capability) => (
+              <div key={capability.id} className="bg-brand-gray p-8 rounded-xl border border-gray-200 hover:border-brand-red transition-colors group">
+                <DynamicIcon name={capability.icon_name || "ShieldCheck"} className="h-10 w-10 text-brand-red mb-5 group-hover:scale-110 transition-transform" />
                 <h4 className="text-xl font-bold text-brand-black mb-3">{capability.title}</h4>
                 <p className="text-gray-600 leading-relaxed text-sm">
-                  {capability.desc}
+                  {capability.description}
                 </p>
               </div>
             ))}
           </div>
         </div>
       </section>
+      </>
+      )}
 
-      {/* WHY USHNIK TECHNOLOGIES SECTION */}
-      <section className="py-20 lg:py-28 bg-brand-black text-white relative overflow-hidden">
+      {getVisibility('why_partner') && (
+      <>
+        {/* WHY USHNIK TECHNOLOGIES SECTION */}
+        <section className="py-20 lg:py-28 bg-brand-black text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -154,17 +170,10 @@ export default async function Home() {
               </p>
               
               <ul className="space-y-4">
-                {[
-                  "German-engineered, performance-led infrastructure architectures",
-                  "Resilience-driven design across hyperscale, private, and hybrid environments",
-                  "Neutral advisory — we recommend what's right for your business, not what earns us the most commission",
-                  "End-to-end support: feasibility, DPR, design, deployment, operations",
-                  "Ecosystem of trusted global DC, cloud, and colocation partners",
-                  "Dual capability: Infrastructure + Software under one roof"
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-start">
+                {features?.map((feat) => (
+                  <li key={feat.id} className="flex items-start">
                     <CheckCircle2 className="h-6 w-6 text-brand-red mr-3 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-300">{item}</span>
+                    <span className="text-gray-300">{feat.text}</span>
                   </li>
                 ))}
               </ul>
@@ -177,14 +186,24 @@ export default async function Home() {
             </div>
             
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-gray-900 border border-gray-800">
-              <div className="absolute inset-0 flex items-center justify-center text-gray-600 font-medium">
-                {/* Placeholder for an image or dynamic component */}
-                [ Corporate Office / Technology Abstract Image ]
-              </div>
+              {sectionConfigs?.find(s => s.section_id === 'why_partner')?.image_url ? (
+                <img 
+                  src={sectionConfigs.find(s => s.section_id === 'why_partner').image_url} 
+                  alt="Ushnik Advantage" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-gray-600 font-medium">
+                  {/* Placeholder for an image or dynamic component */}
+                  [ Corporate Office / Technology Abstract Image ]
+                </div>
+              )}
             </div>
           </div>
         </div>
       </section>
+      </>
+      )}
 
     </>
   );

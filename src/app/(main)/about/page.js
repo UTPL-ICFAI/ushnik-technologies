@@ -1,20 +1,64 @@
 import Link from "next/link";
-import { ArrowRight, Target, Eye, ShieldCheck, Link2 } from "lucide-react";
+import { Target, Eye, ShieldCheck, Link2 } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
 
 export const metadata = {
   title: "About Us | Ushnik Technologies",
   description: "Learn about Ushnik Technologies, our vision, mission, and how we serve as a strategic technology partner.",
 };
 
-export default function AboutPage() {
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+
+export default async function AboutPage() {
+  const supabase = await createClient();
+
+  const { data: heroData } = await supabase
+    .from('hero_sections')
+    .select('*')
+    .eq('page_route', '/about')
+    .single();
+
+  const { data: config } = await supabase
+    .from('about_page_config')
+    .select('*')
+    .eq('id', 1)
+    .single();
+
+  const heading = heroData?.heading || "About Ushnik Technologies";
+  const subheading = heroData?.subheading || "Your strategic partner for navigating the evolving digital economy through robust infrastructure and innovative software solutions.";
+
+  // Fallbacks in case config is missing
+  const whoWeAre = config?.who_we_are_text || "Ushnik Technologies Pvt. Ltd. is a technology and digital infrastructure company.";
+  const mission = config?.mission_text || "To simplify infrastructure decisions.";
+  const vision = config?.vision_text || "To be India's most trusted advisory partner.";
+  const differentiators = config?.differentiators || [];
+  const ecosystemTags = config?.ecosystem_tags || [];
+
   return (
     <div className="bg-brand-white min-h-screen">
       {/* PAGE HERO */}
-      <section className="bg-brand-black text-white py-20 lg:py-28 text-center px-4">
-        <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">About Ushnik Technologies</h1>
-        <p className="text-lg lg:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-          Your strategic partner for navigating the evolving digital economy through robust infrastructure and innovative software solutions.
-        </p>
+      <section className="relative bg-brand-black text-white pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden text-center px-4">
+        {heroData?.is_video && heroData?.video_url ? (
+          <>
+            <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0" src={heroData.video_url} />
+            <div className="absolute inset-0 bg-black/60 z-0"></div>
+          </>
+        ) : (
+          heroData?.fallback_image && (
+            <>
+              <img src={heroData.fallback_image} alt="" className="absolute inset-0 w-full h-full object-cover z-0 opacity-40" />
+              <div className="absolute inset-0 bg-black/50 z-0"></div>
+            </>
+          )
+        )}
+        <div className="max-w-4xl mx-auto relative z-10">
+          <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
+          <p className="text-lg lg:text-xl text-gray-400 leading-relaxed whitespace-pre-line">
+            {subheading}
+          </p>
+        </div>
       </section>
 
       {/* COMPANY OVERVIEW */}
@@ -22,16 +66,21 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div>
             <h2 className="text-3xl font-heading font-bold text-brand-black mb-6">Who We Are</h2>
-            <div className="space-y-4 text-gray-600 leading-relaxed">
-              <p>
-                Ushnik Technologies Pvt. Ltd. is a technology and digital infrastructure company headquartered in India, delivering strategic advisory, technology services, and infrastructure solutions to enterprises, startups, and new business setups across India and globally.
-              </p>
-              <p>
-                We operate through two primary divisions: the <strong>Infrastructure & Data Center Division</strong>, which focuses on cloud advisory, data center partnerships, colocation, IXP ecosystems, and feasibility consulting; and the <strong>Software & Technology Division</strong>, which covers product development, enterprise applications, cybersecurity, and IT staffing.
-              </p>
-              <p>
-                Our strength lies in our ecosystem — a network of trusted data center operators, cloud providers, colocation facilities, ISPs, and technology partners that allows us to deliver neutral, best-fit recommendations to every client we engage with.
-              </p>
+            <div className="space-y-4 text-gray-600 leading-relaxed whitespace-pre-line">
+              {whoWeAre.split('\n\n').map((paragraph, idx) => {
+                // simple bold parsing
+                const parts = paragraph.split(/(\*\*.*?\*\*)/g);
+                return (
+                  <p key={idx}>
+                    {parts.map((part, i) => {
+                      if (part.startsWith('**') && part.endsWith('**')) {
+                        return <strong key={i}>{part.slice(2, -2)}</strong>;
+                      }
+                      return part;
+                    })}
+                  </p>
+                );
+              })}
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -39,14 +88,14 @@ export default function AboutPage() {
               <Target className="h-10 w-10 text-brand-red mb-4" />
               <h3 className="text-xl font-bold text-brand-black mb-2">Our Mission</h3>
               <p className="text-sm text-gray-600">
-                To simplify infrastructure decisions, reduce technology costs, accelerate digital transformation, and enable global-standard connectivity for businesses of every size and industry.
+                {mission}
               </p>
             </div>
             <div className="bg-brand-gray p-6 rounded-xl border border-gray-200 sm:mt-8">
               <Eye className="h-10 w-10 text-brand-red mb-4" />
               <h3 className="text-xl font-bold text-brand-black mb-2">Our Vision</h3>
               <p className="text-sm text-gray-600">
-                To be India's most trusted neutral technology and infrastructure advisory partner — connecting businesses with the right infrastructure, the right technology, and the right partnerships.
+                {vision}
               </p>
             </div>
           </div>
@@ -61,14 +110,7 @@ export default function AboutPage() {
             <p className="text-gray-400">Our unique approach to delivering technology and infrastructure solutions.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              "Neutral advisory — not tied to any single cloud or DC vendor",
-              "Dual capability: Infrastructure + Software under one roof",
-              "Global partnerships with data centers, cloud providers, and technology vendors",
-              "German-engineered, performance-led infrastructure architectures",
-              "Deep expertise in IXP, carrier hotel, and interconnection ecosystem development",
-              "End-to-end support: feasibility, DPR, design, deployment, and optimization"
-            ].map((point, index) => (
+            {differentiators.map((point, index) => (
               <div key={index} className="flex items-start bg-gray-900 p-6 rounded-lg border border-gray-800">
                 <ShieldCheck className="h-6 w-6 text-brand-red mr-4 flex-shrink-0" />
                 <span className="text-gray-300 font-medium">{point}</span>
@@ -82,13 +124,19 @@ export default function AboutPage() {
       <section className="py-16 lg:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl font-heading font-bold text-brand-black mb-12">Leadership</h2>
         <div className="max-w-md mx-auto bg-brand-gray p-8 rounded-xl border border-gray-200">
-          <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-4 overflow-hidden border-2 border-brand-red">
-            {/* Avatar placeholder */}
-          </div>
-          <h3 className="text-xl font-bold text-brand-black">[Founder Name]</h3>
-          <p className="text-brand-red font-medium mb-4">[Designation]</p>
-          <p className="text-gray-600 text-sm">
-            [Brief bio placeholder — 2 to 3 sentences outlining their experience in technology and infrastructure.]
+          {config?.leadership_image_url ? (
+            <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden border-2 border-brand-red">
+              <img src={config.leadership_image_url} alt={config.leadership_name} className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-4 overflow-hidden border-2 border-brand-red flex items-center justify-center text-gray-500 font-bold text-xl">
+              {config?.leadership_name ? config.leadership_name.charAt(0) : "U"}
+            </div>
+          )}
+          <h3 className="text-xl font-bold text-brand-black">{config?.leadership_name || "[Founder Name]"}</h3>
+          <p className="text-brand-red font-medium mb-4">{config?.leadership_designation || "[Designation]"}</p>
+          <p className="text-gray-600 text-sm whitespace-pre-line">
+            {config?.leadership_bio || "[Brief bio placeholder]"}
           </p>
         </div>
       </section>
@@ -99,9 +147,11 @@ export default function AboutPage() {
           <Link2 className="h-12 w-12 text-brand-black mx-auto mb-6" />
           <h2 className="text-3xl font-heading font-bold text-brand-black mb-8">Our Ecosystem</h2>
           <div className="flex flex-wrap justify-center gap-4">
-            <span className="bg-white px-6 py-3 rounded-full text-sm font-semibold border border-gray-300 shadow-sm">Partner Data Centers (Mumbai, Chennai, Hyderabad, Vizag)</span>
-            <span className="bg-white px-6 py-3 rounded-full text-sm font-semibold border border-gray-300 shadow-sm">Global Cloud Partnership Ecosystem</span>
-            <span className="bg-white px-6 py-3 rounded-full text-sm font-semibold border border-gray-300 shadow-sm">Carrier and ISP Network Collaborations</span>
+            {ecosystemTags.map((tag, idx) => (
+              <span key={idx} className="bg-white px-6 py-3 rounded-full text-sm font-semibold border border-gray-300 shadow-sm text-gray-800">
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
       </section>
