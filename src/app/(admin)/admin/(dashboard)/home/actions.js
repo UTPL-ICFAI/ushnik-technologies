@@ -10,17 +10,22 @@ export async function requireAuth(supabase) {
 }
 
 export async function updateStat(formData) {
-  const supabase = await createClient();
-  await requireAuth(supabase);
-  const id = formData.get("id");
-  const { error } = await supabase.from("homepage_statistics").update({
-    value: formData.get("value"),
-    label: formData.get("label"),
-    order_index: parseInt(formData.get("order_index")) || 0
-  }).eq("id", id);
-  if (error) return { success: false, error: error.message };
-  revalidatePath("/", "layout");
-  return { success: true };
+  try {
+    const supabase = await createClient();
+    await requireAuth(supabase);
+    const id = formData.get("id");
+    const { error } = await supabase.from("homepage_statistics").update({
+      value: formData.get("value"),
+      label: formData.get("label"),
+      order_index: parseInt(formData.get("order_index")) || 0
+    }).eq("id", id);
+    if (error) return { success: false, error: error.message };
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error) {
+    console.error("updateStat error:", error);
+    return { success: false, error: error.message || "Server Error" };
+  }
 }
 
 export async function updateCapability(formData) {

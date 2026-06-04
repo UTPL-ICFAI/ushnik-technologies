@@ -12,17 +12,22 @@ export default function StatsForm({ stat }) {
     setLoading(true);
     setMessage(null);
 
-    const formData = new FormData(e.target);
-    const result = await updateStat(formData);
+    try {
+      const formData = new FormData(e.target);
+      const result = await updateStat(formData);
 
-    if (result.success) {
-      setMessage({ type: "success", text: "Saved!" });
-      setTimeout(() => setMessage(null), 3000);
-    } else {
-      setMessage({ type: "error", text: result.error });
+      if (result.success) {
+        setMessage({ type: "success", text: "Saved!" });
+        setTimeout(() => setMessage(null), 3000);
+      } else {
+        setMessage({ type: "error", text: result.error });
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage({ type: "error", text: error.message || "An unexpected error occurred" });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
