@@ -1,9 +1,14 @@
 import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 import AdminSidebar from "./AdminSidebar";
 
 export default async function AdminLayout({ children }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/admin/login");
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-body">
