@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MessageSquare, LayoutTemplate, Zap, BookOpen, UserPlus, Save, Trash2, Plus } from "lucide-react";
-import { updateChatbotSettings, addQuickAction, deleteQuickAction, addKnowledgeDocument, deleteKnowledgeDocument } from "./actions";
+import { updateChatbotSettings, addQuickAction, deleteQuickAction, addKnowledgeDocument, deleteKnowledgeDocument, deleteLead } from "./actions";
 
 export default function ChatbotAdminManager({ settings, quickActions, knowledgeDocs, leads }) {
   const [activeTab, setActiveTab] = useState("appearance");
@@ -257,6 +257,7 @@ export default function ChatbotAdminManager({ settings, quickActions, knowledgeD
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chat History snippet</th>
+                      <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -283,6 +284,13 @@ export default function ChatbotAdminManager({ settings, quickActions, knowledgeD
                               </div>
                             ))}
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <form action={deleteLead.bind(null, lead.id)}>
+                            <button type="submit" className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-md transition-colors">
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </form>
                         </td>
                       </tr>
                     ))}

@@ -105,3 +105,13 @@ export async function deleteKnowledgeDocument(id) {
   revalidatePath("/admin/chatbot");
   return { success: true };
 }
+
+export async function deleteLead(id) {
+  const supabase = await createClient();
+  await requireAuth(supabase);
+  const { error } = await supabase.from("chatbot_leads").delete().eq("id", id);
+  if (error) return { success: false, error: error.message };
+  revalidatePath("/admin/chatbot");
+  revalidatePath("/admin/chatbot-leads"); // Revalidate both places just in case
+  return { success: true };
+}
