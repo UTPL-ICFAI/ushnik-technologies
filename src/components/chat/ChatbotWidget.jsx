@@ -17,22 +17,13 @@ export default function ChatbotWidget() {
 
   const handleInputChange = (e) => setInput(e.target.value);
 
-  const handleSubmit = async (e) => {
-    e?.preventDefault();
-    if (!input.trim() || isLoading) return;
-    
-    const userMsg = { role: 'user', content: input };
-    const newMessages = [...messages, userMsg];
-    
-    setMessages(newMessages);
-    setInput("");
+  const processChatResponse = async (chatMessages) => {
     setIsLoading(true);
-
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages })
+        body: JSON.stringify({ messages: chatMessages })
       });
       
       if (!res.ok) throw new Error("Failed to send message");
@@ -69,13 +60,33 @@ export default function ChatbotWidget() {
       setIsLoading(false);
     }
   };
+
+  const handleSubmit = async (e) => {
+    e?.preventDefault();
+    if (!input.trim() || isLoading) return;
+    
+    const userMsg = { role: 'user', content: input };
+    const newMessages = [...messages, userMsg];
+    
+    setMessages(newMessages);
+    setInput("");
+    
+    // Check if we need to capture leads first
+    const needsLeadCapture = settings?.lead_name_enabled || settings?.lead_email_enabled || settings?.lead_phone_enabled;
+    if (needsLeadCapture && !isLeadCaptured) {
+      setShowLeadForm(true);
+      return;
+    }
+
+    await processChatResponse(newMessages);
+  };
   
   // Lead form state
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [leadData, setLeadData] = useState({ name: "", email: "", phone: "" });
   const [isLeadCaptured, setIsLeadCaptured] = useState(false);
 
-  const messagesEndRef = useRef(null);
+  const scrollContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,10 +106,15 @@ export default function ChatbotWidget() {
     }
   }, [isOpen]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or loading state changes
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [messages, showLeadForm, isLoading]);
 
   const handleQuickAction = (actionText) => {
     setInput(actionText);
@@ -120,7 +136,16 @@ export default function ChatbotWidget() {
     setShowLeadForm(false);
     
     // Resume normal chat flow by sending a hidden confirmation to the AI
-    setMessages(prev => [...prev, { id: Date.now().toString(), role: 'system', content: 'Lead captured successfully.' }]);
+    const sysMsg = { id: Date.now().toString(), role: 'system', content: 'Lead captured successfully.' };
+    const newMessages = [...messages, sysMsg];
+    setMessages(newMessages);
+    await processChatResponse(newMessages);
+  };
+
+  const handleSkipLead = async () => {
+    setIsLeadCaptured(true); // Don't ask again this session
+    setShowLeadForm(false);
+    await processChatResponse(messages);
   };
 
   // If disabled in admin, or still loading, don't render anything
@@ -132,12 +157,17 @@ export default function ChatbotWidget() {
   const panelPosition = settings?.position === "left" ? "left-0" : "right-0";
 
   return (
-    <div className={`fixed bottom-6 ${widgetPosition} z-50`}>
+    <>
       {/* Chat Window */}
       {isOpen && (
-        <div className={`absolute bottom-16 ${panelPosition} w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col h-[550px] max-h-[85vh]`}>
+        <div className={`
+          fixed sm:absolute 
+          bottom-20 left-4 right-4 sm:bottom-16 sm:left-auto sm:${panelPosition} sm:w-96 
+          bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col 
+          h-[80dvh] sm:h-[550px] sm:max-h-[85vh] z-[60]
+        `}>
           {/* Header */}
-          <div style={{ backgroundColor: brandColor }} className="text-white p-4 flex justify-between items-center">
+          <div style={{ backgroundColor: brandColor }} className="text-white p-4 flex justify-between items-center flex-shrink-0">
             <div className="flex flex-col">
               <div className="flex items-center space-x-2">
                 <Bot className="h-5 w-5 text-white" />
@@ -153,7 +183,7 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
             {/* Welcome Message */}
             {settings?.welcome_message && messages.length === 0 && (
               <div className="flex items-start space-x-3">
@@ -224,12 +254,10 @@ export default function ChatbotWidget() {
                     <input type="tel" placeholder="Your Phone Number" required className="w-full text-sm p-2 border rounded" value={leadData.phone} onChange={e => setLeadData({...leadData, phone: e.target.value})} />
                   )}
                   <button type="submit" className="w-full text-white text-sm font-bold py-2 rounded mt-2 transition-opacity hover:opacity-90" style={{ backgroundColor: brandColor }}>Submit Details</button>
-                  <button type="button" onClick={() => setShowLeadForm(false)} className="w-full text-gray-500 text-xs mt-1">Skip for now</button>
+                  <button type="button" onClick={handleSkipLead} className="w-full text-gray-500 text-xs mt-1 py-1 hover:text-gray-700">Skip for now</button>
                 </form>
               </div>
             )}
-            
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Input Form */}
@@ -269,19 +297,21 @@ export default function ChatbotWidget() {
 
       {/* Floating Toggle Button */}
       {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          style={{ backgroundColor: brandColor }}
-          className="text-white p-4 rounded-full shadow-xl hover:scale-105 transition-transform flex items-center justify-center group"
-        >
-          <MessageSquare className="h-6 w-6" />
-          {/* Notification Dot */}
-          <span className="absolute top-0 right-0 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
-          </span>
-        </button>
+        <div className={`fixed bottom-6 ${widgetPosition} z-[60]`}>
+          <button
+            onClick={() => setIsOpen(true)}
+            style={{ backgroundColor: brandColor }}
+            className="text-white p-4 rounded-full shadow-xl hover:scale-105 transition-transform flex items-center justify-center group"
+          >
+            <MessageSquare className="h-6 w-6" />
+            {/* Notification Dot */}
+            <span className="absolute top-0 right-0 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+            </span>
+          </button>
+        </div>
       )}
-    </div>
+    </>
   );
 }
