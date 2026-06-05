@@ -11,17 +11,63 @@ export default function ImagePlaceholder({
   label = "Section Image"
 }) {
   const [preview, setPreview] = useState(currentImage || null);
+  const [isCompressing, setIsCompressing] = useState(false);
 
-  const handleFileChange = (e) => {
+  // Compress image to ensure it fits within Vercel's 4.5MB Serverless payload limit
+  const compressImage = (file, maxWidth = 1280, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new window.Image(); // Use window.Image to avoid conflict with lucide-react
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          }, 'image/jpeg', quality);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Create a local object URL for preview
-    const objectUrl = URL.createObjectURL(file);
-    setPreview(objectUrl);
+    setIsCompressing(true);
     
-    if (onImageSelected) {
-      onImageSelected(file);
+    try {
+      // Compress the image before creating previews or calling callbacks
+      const compressedBlob = await compressImage(file, 1280, 0.8);
+      
+      // Create a local object URL for preview
+      const objectUrl = URL.createObjectURL(compressedBlob);
+      setPreview(objectUrl);
+      
+      if (onImageSelected) {
+        onImageSelected(compressedBlob);
+      }
+    } catch (err) {
+      console.error("Compression failed", err);
+      // Fallback to original
+      setPreview(URL.createObjectURL(file));
+      if (onImageSelected) onImageSelected(file);
+    } finally {
+      setIsCompressing(false);
     }
   };
 
@@ -43,9 +89,10 @@ export default function ImagePlaceholder({
             accept="image/*"
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             onChange={handleFileChange}
+            disabled={isCompressing}
           />
-          <UploadCloud className="h-8 w-8 text-gray-400 mb-2" />
-          <span className="text-sm font-medium text-brand-black">Upload Image</span>
+          <UploadCloud className={`h-8 w-8 text-gray-400 mb-2 ${isCompressing ? 'animate-bounce' : ''}`} />
+          <span className="text-sm font-medium text-brand-black">{isCompressing ? 'Compressing...' : 'Upload Image'}</span>
           <span className="text-xs text-gray-400 mt-1">Recommended: {recommendedSize}</span>
         </div>
       ) : (
