@@ -33,7 +33,13 @@ export default function SectionImageForm({ sectionId, initialImageUrl, label = "
         currentImage={imageUrl}
         recommendedSize="800 x 600"
         label="Upload main image"
-        onImageSelected={(file) => setImageUrl(URL.createObjectURL(file))}
+        onImageSelected={(file) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImageUrl(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }}
         onImageRemoved={() => setImageUrl("")}
       />
 
