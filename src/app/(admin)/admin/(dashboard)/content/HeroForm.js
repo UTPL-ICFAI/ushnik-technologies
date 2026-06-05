@@ -134,9 +134,11 @@ export default function HeroForm({ hero }) {
                 recommendedSize="1920 x 1080"
                 label="Hero Background Image"
                 onImageSelected={(file) => {
-                  // In a real app, this would upload to Supabase Storage like the video upload does.
-                  // For this simplified CMS demo, we create an object URL.
-                  setImageUrl(URL.createObjectURL(file));
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setImageUrl(reader.result);
+                  };
+                  reader.readAsDataURL(file);
                 }}
                 onImageRemoved={() => setImageUrl("")}
               />

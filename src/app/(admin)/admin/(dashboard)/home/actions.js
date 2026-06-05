@@ -125,9 +125,15 @@ export async function updateSectionVisibility(section_id, is_visible) {
 }
 
 export async function updateSectionImage(section_id, image_url) {
-  const supabase = await createClient();
-  await requireAuth(supabase);
-  await supabase.from("homepage_sections_config").update({ image_url }).eq("section_id", section_id);
-  revalidatePath("/", "layout");
-  return { success: true };
+  try {
+    const supabase = await createClient();
+    await requireAuth(supabase);
+    const { error } = await supabase.from("homepage_sections_config").update({ image_url }).eq("section_id", section_id);
+    if (error) return { success: false, error: error.message };
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error) {
+    console.error("updateSectionImage error:", error);
+    return { success: false, error: error.message || "Server Error" };
+  }
 }

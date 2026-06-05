@@ -142,7 +142,13 @@ export default function AboutForm({ config }) {
               currentImage={imageUrl}
               recommendedSize="400 x 400"
               label="Profile Picture"
-              onImageSelected={(file) => setImageUrl(URL.createObjectURL(file))}
+              onImageSelected={(file) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setImageUrl(reader.result);
+                };
+                reader.readAsDataURL(file);
+              }}
               onImageRemoved={() => setImageUrl("")}
             />
           </div>

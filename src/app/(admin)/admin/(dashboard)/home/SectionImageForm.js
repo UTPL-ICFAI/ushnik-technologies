@@ -12,14 +12,20 @@ export default function SectionImageForm({ sectionId, initialImageUrl, label = "
   const handleSave = async () => {
     setLoading(true);
     setMessage(null);
-    const result = await updateSectionImage(sectionId, imageUrl);
-    if (result.success) {
-      setMessage({ type: "success", text: "Saved!" });
-      setTimeout(() => setMessage(null), 3000);
-    } else {
-      setMessage({ type: "error", text: result.error });
+    try {
+      const result = await updateSectionImage(sectionId, imageUrl);
+      if (result?.success) {
+        setMessage({ type: "success", text: "Saved!" });
+        setTimeout(() => setMessage(null), 3000);
+      } else {
+        setMessage({ type: "error", text: result?.error || "Unknown error" });
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage({ type: "error", text: error.message || "An unexpected error occurred. Image may be too large." });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
