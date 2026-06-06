@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { updateGlobalSettings } from "./actions";
+import toast from "react-hot-toast";
 
 export default function SettingsForm({ initialData }) {
   const [loading, setLoading] = useState(false);
@@ -10,27 +11,24 @@ export default function SettingsForm({ initialData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
 
     const formData = new FormData(e.target);
-    const result = await updateGlobalSettings(formData);
-
-    if (result.success) {
-      setMessage({ type: "success", text: "Settings updated successfully! The live website has been updated." });
-    } else {
-      setMessage({ type: "error", text: result.error });
-    }
-
-    setLoading(false);
+    
+    toast.promise(
+      updateGlobalSettings(formData).then(result => {
+        if (!result.success) throw new Error(result.error);
+        return result;
+      }),
+      {
+        loading: 'Saving settings...',
+        success: 'Settings updated successfully!',
+        error: (err) => `Failed to save: ${err.message}`,
+      }
+    ).finally(() => setLoading(false));
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-      {message && (
-        <div className={`p-4 rounded-md text-sm ${message.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
-          {message.text}
-        </div>
-      )}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
@@ -113,6 +111,83 @@ export default function SettingsForm({ initialData }) {
           defaultValue={initialData?.footer_text}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none"
         />
+      </div>
+
+      {/* Animation Settings Section */}
+      <div className="pt-6 border-t border-gray-200 space-y-4">
+        <h2 className="text-lg font-bold text-brand-black">Animation System</h2>
+        
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            name="enable_animations"
+            value="true"
+            defaultChecked={initialData?.enable_animations ?? true}
+            className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+          />
+          <label className="ml-2 block text-sm text-gray-900 font-medium">
+            Enable Master Animations
+          </label>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="enable_hero_animations"
+              value="true"
+              defaultChecked={initialData?.enable_hero_animations ?? true}
+              className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+            />
+            <label className="ml-2 block text-sm text-gray-700">Hero Section Animations</label>
+          </div>
+          
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="enable_scroll_reveal"
+              value="true"
+              defaultChecked={initialData?.enable_scroll_reveal ?? true}
+              className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+            />
+            <label className="ml-2 block text-sm text-gray-700">Scroll Reveal Animations</label>
+          </div>
+          
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="enable_counter_animations"
+              value="true"
+              defaultChecked={initialData?.enable_counter_animations ?? true}
+              className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+            />
+            <label className="ml-2 block text-sm text-gray-700">Counter Statistics Animations</label>
+          </div>
+          
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="enable_chatbot_animations"
+              value="true"
+              defaultChecked={initialData?.enable_chatbot_animations ?? true}
+              className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+            />
+            <label className="ml-2 block text-sm text-gray-700">Chatbot Animations</label>
+          </div>
+        </div>
+
+        <div className="pt-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Animation Speed</label>
+          <select
+            name="animation_speed"
+            defaultValue={initialData?.animation_speed || 'normal'}
+            className="w-full sm:w-1/2 px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none bg-white"
+          >
+            <option value="fast">Fast (Recommended for Snappy UX)</option>
+            <option value="normal">Normal</option>
+            <option value="slow">Slow (Dramatic)</option>
+          </select>
+        </div>
       </div>
 
       <div className="pt-4 border-t border-gray-200">

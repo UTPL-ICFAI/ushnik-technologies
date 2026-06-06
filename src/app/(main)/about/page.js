@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Target, Eye, ShieldCheck, Link2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
+import StaggerContainer, { StaggerItem } from "@/components/animations/StaggerContainer";
+import SlideUp from "@/components/animations/SlideUp";
+import ScaleOnHover from "@/components/animations/ScaleOnHover";
 
 export const metadata = {
   title: "About Us | Ushnik Technologies",
@@ -53,16 +56,20 @@ export default async function AboutPage() {
             </>
           )
         )}
-        <div className="max-w-4xl mx-auto relative z-10">
-          <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
-          <p className="text-lg lg:text-xl text-gray-400 leading-relaxed whitespace-pre-line">
-            {subheading}
-          </p>
-        </div>
+        <StaggerContainer className="max-w-4xl mx-auto relative z-10">
+          <StaggerItem>
+            <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
+          </StaggerItem>
+          <StaggerItem>
+            <p className="text-lg lg:text-xl text-gray-400 leading-relaxed whitespace-pre-line">
+              {subheading}
+            </p>
+          </StaggerItem>
+        </StaggerContainer>
       </section>
 
       {/* COMPANY OVERVIEW */}
-      <section className="py-16 lg:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <SlideUp className="py-16 lg:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div>
             <h2 className="text-3xl font-heading font-bold text-brand-black mb-6">Who We Are</h2>
@@ -84,49 +91,51 @@ export default async function AboutPage() {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-brand-gray p-6 rounded-xl border border-gray-200">
+            <ScaleOnHover className="bg-brand-gray p-6 rounded-xl border border-gray-200">
               <Target className="h-10 w-10 text-brand-red mb-4" />
               <h3 className="text-xl font-bold text-brand-black mb-2">Our Mission</h3>
               <p className="text-sm text-gray-600">
                 {mission}
               </p>
-            </div>
-            <div className="bg-brand-gray p-6 rounded-xl border border-gray-200 sm:mt-8">
+            </ScaleOnHover>
+            <ScaleOnHover className="bg-brand-gray p-6 rounded-xl border border-gray-200 sm:mt-8">
               <Eye className="h-10 w-10 text-brand-red mb-4" />
               <h3 className="text-xl font-bold text-brand-black mb-2">Our Vision</h3>
               <p className="text-sm text-gray-600">
                 {vision}
               </p>
-            </div>
+            </ScaleOnHover>
           </div>
         </div>
-      </section>
+      </SlideUp>
 
       {/* WHAT MAKES US DIFFERENT */}
       <section className="bg-brand-black text-white py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SlideUp className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-heading font-bold mb-4">What Makes Us Different</h2>
             <p className="text-gray-400">Our unique approach to delivering technology and infrastructure solutions.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {differentiators.map((point, index) => (
-              <div key={index} className="flex items-start bg-gray-900 p-6 rounded-lg border border-gray-800">
-                <ShieldCheck className="h-6 w-6 text-brand-red mr-4 flex-shrink-0" />
-                <span className="text-gray-300 font-medium">{point}</span>
-              </div>
+              <StaggerItem key={index}>
+                <ScaleOnHover className="flex items-start bg-gray-900 p-6 rounded-lg border border-gray-800 h-full">
+                  <ShieldCheck className="h-6 w-6 text-brand-red mr-4 flex-shrink-0" />
+                  <span className="text-gray-300 font-medium">{point}</span>
+                </ScaleOnHover>
+              </StaggerItem>
             ))}
-          </div>
-        </div>
+          </StaggerContainer>
+        </SlideUp>
       </section>
 
       {/* LEADERSHIP (Placeholder) */}
-      <section className="py-16 lg:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <SlideUp className="py-16 lg:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl font-heading font-bold text-brand-black mb-12">Leadership</h2>
         <div className="max-w-md mx-auto bg-brand-gray p-8 rounded-xl border border-gray-200">
           {config?.leadership_image_url ? (
             <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden border-2 border-brand-red">
-              <img src={config.leadership_image_url} alt={config.leadership_name} className="w-full h-full object-cover" />
+              <img src={config.leadership_image_url} alt={config.leadership_name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
             </div>
           ) : (
             <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-4 overflow-hidden border-2 border-brand-red flex items-center justify-center text-gray-500 font-bold text-xl">
@@ -139,22 +148,24 @@ export default async function AboutPage() {
             {config?.leadership_bio || "[Brief bio placeholder]"}
           </p>
         </div>
-      </section>
+      </SlideUp>
 
       {/* PARTNERSHIPS */}
-      <section className="bg-brand-gray py-16 border-t border-gray-200">
+      <SlideUp className="bg-brand-gray py-16 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Link2 className="h-12 w-12 text-brand-black mx-auto mb-6" />
           <h2 className="text-3xl font-heading font-bold text-brand-black mb-8">Our Ecosystem</h2>
-          <div className="flex flex-wrap justify-center gap-4">
+          <StaggerContainer className="flex flex-wrap justify-center gap-4">
             {ecosystemTags.map((tag, idx) => (
-              <span key={idx} className="bg-white px-6 py-3 rounded-full text-sm font-semibold border border-gray-300 shadow-sm text-gray-800">
-                {tag}
-              </span>
+              <StaggerItem key={idx}>
+                <ScaleOnHover className="bg-white px-6 py-3 rounded-full text-sm font-semibold border border-gray-300 shadow-sm text-gray-800">
+                  {tag}
+                </ScaleOnHover>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
-      </section>
+      </SlideUp>
     </div>
   );
 }

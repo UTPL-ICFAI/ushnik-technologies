@@ -2,6 +2,10 @@ import Link from "next/link";
 import { Server, Code, ArrowRight, CheckCircle2 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
+import StaggerContainer, { StaggerItem } from "@/components/animations/StaggerContainer";
+import SlideUp from "@/components/animations/SlideUp";
+import CountUpStat from "@/components/animations/CountUpStat";
+import ScaleOnHover from "@/components/animations/ScaleOnHover";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -59,20 +63,24 @@ export default async function Home() {
           </>
         )}
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-tight sm:leading-tight md:leading-tight lg:leading-tight text-balance">
-            {heading}
-          </h1>
-          <p className="mt-4 text-xl text-gray-300 max-w-3xl mx-auto font-body">
-            {subheading}
-          </p>
-        </div>
+        <StaggerContainer className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <StaggerItem>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-tight sm:leading-tight md:leading-tight lg:leading-tight text-balance">
+              {heading}
+            </h1>
+          </StaggerItem>
+          <StaggerItem>
+            <p className="mt-4 text-xl text-gray-300 max-w-3xl mx-auto font-body">
+              {subheading}
+            </p>
+          </StaggerItem>
+        </StaggerContainer>
       </section>
 
       {getVisibility('split_services') && (
       <>
         {/* FULL WIDTH SPLIT SCREEN - TWO DIVISIONS */}
-        <section className="flex flex-col lg:flex-row w-full min-h-[50vh]">
+        <SlideUp className="flex flex-col lg:flex-row w-full min-h-[50vh]">
         {/* Left Card: Infrastructure */}
         <Link 
           href="/infrastructure" 
@@ -108,25 +116,39 @@ export default async function Home() {
             Explore Software Services <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
           </span>
         </Link>
-      </section>
+      </SlideUp>
       </>
       )}
 
       {getVisibility('trust_bar') && (
       <>
         {/* TRUST BAR */}
-        <section className="bg-brand-gray py-8 border-y border-gray-200">
+        <SlideUp className="bg-brand-gray py-8 border-y border-gray-200" delay={0.2}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center divide-x divide-gray-300">
-            {stats?.map((stat, idx) => (
-              <div key={stat.id} className={`px-4 ${idx > 0 && idx % 2 !== 0 ? 'border-l-0 md:border-l' : idx > 0 ? 'border-l-0 md:border-l' : ''} ${idx === 4 ? 'col-span-2 md:col-span-1' : ''}`}>
-                <p className="text-3xl font-bold text-brand-black">{stat.value}</p>
-                <p className="text-sm font-medium text-gray-500 mt-1 uppercase tracking-wider">{stat.label}</p>
-              </div>
-            ))}
+            {stats?.map((stat, idx) => {
+              // Extract prefix/suffix for animation
+              const numMatch = stat.value.match(/[0-9.]+/);
+              const numberPart = numMatch ? numMatch[0] : stat.value;
+              const textBefore = stat.value.split(numberPart)[0] || "";
+              const textAfter = stat.value.split(numberPart)[1] || "";
+              
+              return (
+                <div key={stat.id} className={`px-4 ${idx > 0 && idx % 2 !== 0 ? 'border-l-0 md:border-l' : idx > 0 ? 'border-l-0 md:border-l' : ''} ${idx === 4 ? 'col-span-2 md:col-span-1' : ''}`}>
+                  <p className="text-3xl font-bold text-brand-black">
+                    {numMatch ? (
+                      <CountUpStat value={numberPart} prefix={textBefore} suffix={textAfter} />
+                    ) : (
+                      stat.value
+                    )}
+                  </p>
+                  <p className="text-sm font-medium text-gray-500 mt-1 uppercase tracking-wider">{stat.label}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
-      </section>
+      </SlideUp>
       </>
       )}
 
@@ -134,24 +156,26 @@ export default async function Home() {
       <>
         {/* WHAT WE ENABLE SECTION */}
         <section className="py-20 lg:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SlideUp className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-brand-red font-bold tracking-wide uppercase text-sm mb-2">Capabilities</h2>
             <h3 className="text-3xl lg:text-4xl font-heading font-bold text-brand-black">What We Enable</h3>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {capabilities?.map((capability) => (
-              <div key={capability.id} className="bg-brand-gray p-8 rounded-xl border border-gray-200 hover:border-brand-red transition-colors group">
-                <DynamicIcon name={capability.icon_name || "ShieldCheck"} className="h-10 w-10 text-brand-red mb-5 group-hover:scale-110 transition-transform" />
-                <h4 className="text-xl font-bold text-brand-black mb-3">{capability.title}</h4>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  {capability.description}
-                </p>
-              </div>
+              <StaggerItem key={capability.id}>
+                <ScaleOnHover className="bg-brand-gray p-8 rounded-xl border border-gray-200 hover:border-brand-red transition-colors group h-full">
+                  <DynamicIcon name={capability.icon_name || "ShieldCheck"} className="h-10 w-10 text-brand-red mb-5 group-hover:scale-110 transition-transform" />
+                  <h4 className="text-xl font-bold text-brand-black mb-3">{capability.title}</h4>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    {capability.description}
+                  </p>
+                </ScaleOnHover>
+              </StaggerItem>
             ))}
-          </div>
-        </div>
+          </StaggerContainer>
+        </SlideUp>
       </section>
       </>
       )}
@@ -160,7 +184,7 @@ export default async function Home() {
       <>
         {/* WHY USHNIK TECHNOLOGIES SECTION */}
         <section className="py-20 lg:py-28 bg-brand-black text-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <SlideUp className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-brand-red font-bold tracking-wide uppercase text-sm mb-2">The Ushnik Advantage</h2>
@@ -190,7 +214,7 @@ export default async function Home() {
                 <img 
                   src={sectionConfigs.find(s => s.section_id === 'why_partner').image_url} 
                   alt="Ushnik Advantage" 
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-gray-600 font-medium">
@@ -200,7 +224,7 @@ export default async function Home() {
               )}
             </div>
           </div>
-        </div>
+        </SlideUp>
       </section>
       </>
       )}

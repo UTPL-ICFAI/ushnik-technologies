@@ -2,6 +2,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
+import StaggerContainer, { StaggerItem } from "@/components/animations/StaggerContainer";
+import SlideUp from "@/components/animations/SlideUp";
+import ScaleOnHover from "@/components/animations/ScaleOnHover";
 
 export const metadata = {
   title: "Software & Technology Services | Ushnik Technologies",
@@ -53,19 +56,23 @@ export default async function SoftwarePage() {
             <div className="absolute inset-0 bg-black/60 z-0"></div>
           </>
         )}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
-          <p className="text-lg lg:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-            {subheading}
-          </p>
-        </div>
+        <StaggerContainer className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <StaggerItem>
+            <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
+          </StaggerItem>
+          <StaggerItem>
+            <p className="text-lg lg:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              {subheading}
+            </p>
+          </StaggerItem>
+        </StaggerContainer>
       </section>
 
       {/* SERVICES */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 lg:space-y-24">
           {services?.map((service, index) => (
-            <div key={service.id} id={service.id} className={`flex flex-col lg:flex-row gap-8 lg:gap-16 ${index % 2 !== 0 ? 'lg:flex-row-reverse' : ''} items-start`}>
+            <SlideUp key={service.id} id={service.id} className={`flex flex-col lg:flex-row gap-8 lg:gap-16 ${index % 2 !== 0 ? 'lg:flex-row-reverse' : ''} items-start`}>
               <div className="lg:w-1/3 bg-brand-gray p-8 rounded-xl shadow-sm border border-gray-200">
                 <DynamicIcon name={service.icon_name} className="h-10 w-10 text-brand-red mb-4" />
                 <h2 className="text-2xl font-heading font-bold text-brand-black mb-4">{service.title}</h2>
@@ -73,23 +80,25 @@ export default async function SoftwarePage() {
               </div>
               
               <div className="lg:w-2/3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {service.bullet_points?.map((item, idx) => (
-                    <div key={idx} className="flex items-start bg-white p-4 rounded-lg border border-gray-200 hover:border-brand-red transition-colors">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-brand-red mt-2 mr-3"></div>
-                      <span className="text-gray-700 text-sm">{item}</span>
-                    </div>
+                    <StaggerItem key={idx}>
+                      <ScaleOnHover className="flex items-start bg-white p-4 rounded-lg border border-gray-200 hover:border-brand-red transition-colors h-full">
+                        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-brand-red mt-2 mr-3"></div>
+                        <span className="text-gray-700 text-sm">{item}</span>
+                      </ScaleOnHover>
+                    </StaggerItem>
                   ))}
-                </div>
+                </StaggerContainer>
               </div>
-            </div>
+            </SlideUp>
           ))}
         </div>
       </section>
 
       {/* CTA SECTION */}
       <section className="bg-brand-gray py-20 lg:py-28 border-t border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <SlideUp className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-heading font-bold text-brand-black mb-6">Need a Technology Partner?</h2>
           <p className="text-gray-600 mb-10 leading-relaxed max-w-2xl mx-auto">
             Whether you're looking to build a custom application, secure your digital assets, or augment your IT team, we have the expertise to help you succeed.
@@ -108,7 +117,7 @@ export default async function SoftwarePage() {
               Request Assessment
             </Link>
           </div>
-        </div>
+        </SlideUp>
       </section>
     </div>
   );

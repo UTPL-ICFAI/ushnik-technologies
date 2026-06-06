@@ -5,11 +5,16 @@ import { useState, useEffect, useRef } from "react";
 import { MessageSquare, X, Send, User, Bot, Loader2, UserPlus } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import ReactMarkdown from "react-markdown";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAnimationConfig } from "@/components/animations/AnimationProvider";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState(null);
   const [quickActions, setQuickActions] = useState([]);
+  
+  const { shouldAnimate, enableChatbotAnimations, animationSpeed } = useAnimationConfig();
+  const animateChat = shouldAnimate && enableChatbotAnimations;
   
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -159,12 +164,18 @@ export default function ChatbotWidget() {
   return (
     <>
       {/* Chat Window */}
+      <AnimatePresence>
       {isOpen && (
-        <div className={`
+        <motion.div 
+          initial={animateChat ? { opacity: 0, scale: 0.9, y: 20 } : false}
+          animate={animateChat ? { opacity: 1, scale: 1, y: 0 } : false}
+          exit={animateChat ? { opacity: 0, scale: 0.9, y: 20 } : false}
+          transition={{ duration: animationSpeed === 'fast' ? 0.2 : 0.3 }}
+          className={`
           fixed sm:absolute 
           bottom-20 left-4 right-4 sm:bottom-16 sm:left-auto sm:${panelPosition} sm:w-96 
           bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col 
-          h-[80dvh] sm:h-[550px] sm:max-h-[85vh] z-[60]
+          h-[80dvh] sm:h-[550px] sm:max-h-[85vh] z-[60] origin-bottom-right
         `}>
           {/* Header */}
           <div style={{ backgroundColor: brandColor }} className="text-white p-4 flex justify-between items-center flex-shrink-0">
@@ -213,7 +224,13 @@ export default function ChatbotWidget() {
 
             {/* Chat History */}
             {messages.filter(m => m.role !== 'system').map((m, i) => (
-              <div key={m.id || i} className={`flex items-start space-x-3 ${m.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <motion.div 
+                initial={animateChat ? { opacity: 0, x: m.role === 'user' ? 20 : -20 } : false}
+                animate={animateChat ? { opacity: 1, x: 0 } : false}
+                transition={{ duration: 0.3 }}
+                key={m.id || i} 
+                className={`flex items-start space-x-3 ${m.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}
+              >
                 <div className={`p-2 rounded-full shadow-sm ${m.role === 'user' ? 'text-white' : 'bg-white'}`} style={m.role === 'user' ? { backgroundColor: brandColor } : {}}>
                   {m.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" style={{ color: brandColor }} />}
                 </div>
@@ -228,15 +245,24 @@ export default function ChatbotWidget() {
                     <ReactMarkdown>{m.content}</ReactMarkdown>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))}
             
             {isLoading && (
-              <div className="flex items-start space-x-3">
+              <motion.div 
+                initial={animateChat ? { opacity: 0, x: -20 } : false}
+                animate={animateChat ? { opacity: 1, x: 0 } : false}
+                className="flex items-start space-x-3"
+              >
                 <div className="bg-white p-2 rounded-full shadow-sm">
-                  <Loader2 className="h-4 w-4 animate-spin" style={{ color: brandColor }} />
+                  <Bot className="h-4 w-4" style={{ color: brandColor }} />
                 </div>
-              </div>
+                <div className="bg-white p-3 rounded-xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100 flex items-center space-x-1 h-[42px]">
+                  <motion.div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: brandColor }} animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} />
+                  <motion.div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: brandColor }} animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} />
+                  <motion.div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: brandColor }} animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} />
+                </div>
+              </motion.div>
             )}
 
             {/* Lead Capture Form injection */}
@@ -292,12 +318,19 @@ export default function ChatbotWidget() {
               </button>
             </form>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
+      <AnimatePresence>
       {/* Floating Toggle Button */}
       {!isOpen && (
-        <div className={`fixed bottom-6 ${widgetPosition} z-[60]`}>
+        <motion.div 
+          initial={animateChat ? { opacity: 0, scale: 0.5 } : false}
+          animate={animateChat ? { opacity: 1, scale: 1 } : false}
+          exit={animateChat ? { opacity: 0, scale: 0.5 } : false}
+          className={`fixed bottom-6 ${widgetPosition} z-[60]`}
+        >
           <button
             onClick={() => setIsOpen(true)}
             style={{ backgroundColor: brandColor }}
@@ -310,8 +343,9 @@ export default function ChatbotWidget() {
               <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
             </span>
           </button>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </>
   );
 }

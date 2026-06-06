@@ -1,6 +1,8 @@
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import ContactForm from "./ContactForm";
+import StaggerContainer, { StaggerItem } from "@/components/animations/StaggerContainer";
+import SlideUp from "@/components/animations/SlideUp";
 
 export const metadata = {
   title: "Contact Us | Ushnik Technologies",
@@ -15,13 +17,19 @@ export default async function ContactPage() {
     <div className="bg-brand-gray min-h-screen pb-20">
       {/* HEADER */}
       <section className="bg-brand-black text-white py-16 text-center px-4">
-        <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-4">Contact Us</h1>
-        <p className="text-gray-400 max-w-2xl mx-auto">
-          We are here to help you build, optimize, and scale your technology infrastructure. Reach out to us today.
-        </p>
+        <StaggerContainer>
+          <StaggerItem>
+            <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-4">Contact Us</h1>
+          </StaggerItem>
+          <StaggerItem>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              We are here to help you build, optimize, and scale your technology infrastructure. Reach out to us today.
+            </p>
+          </StaggerItem>
+        </StaggerContainer>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+      <SlideUp className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col lg:flex-row">
           
           {/* CONTACT INFO */}
@@ -76,7 +84,7 @@ export default async function ContactPage() {
           </div>
 
         </div>
-      </section>
+      </SlideUp>
     </div>
   );
 }
