@@ -12,7 +12,7 @@ export const metadata = {
 
 export default async function CareersPage({ searchParams }) {
   const supabase = await createClient();
-  
+
   const resolvedSearchParams = await searchParams;
   const search = resolvedSearchParams?.search || '';
   const department = resolvedSearchParams?.department || '';
@@ -37,7 +37,7 @@ export default async function CareersPage({ searchParams }) {
   }
 
   const { data: jobs, error } = await query;
-  
+
   // Get unique departments and locations for filters
   const { data: allJobs } = await supabase.from('jobs').select('department, location').eq('status', 'open');
   const departments = [...new Set(allJobs?.map(j => j.department))].filter(Boolean);
@@ -61,19 +61,19 @@ export default async function CareersPage({ searchParams }) {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* Filters Sidebar */}
           <div className="lg:w-1/4">
             <SlideUp className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-24">
               <h3 className="font-heading font-bold text-lg mb-6">Filter Roles</h3>
               <form className="space-y-6" method="GET" action="/careers">
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       name="search"
                       defaultValue={search}
                       placeholder="Job title..."
@@ -85,8 +85,8 @@ export default async function CareersPage({ searchParams }) {
                 {departments.length > 0 && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                    <select 
-                      name="department" 
+                    <select
+                      name="department"
                       defaultValue={department}
                       className="w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-red focus:border-brand-red sm:text-sm"
                     >
@@ -101,8 +101,8 @@ export default async function CareersPage({ searchParams }) {
                 {locations.length > 0 && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                    <select 
-                      name="location" 
+                    <select
+                      name="location"
                       defaultValue={location}
                       className="w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-red focus:border-brand-red sm:text-sm"
                     >
@@ -114,8 +114,8 @@ export default async function CareersPage({ searchParams }) {
                   </div>
                 )}
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="w-full bg-brand-red text-white py-2 rounded-md font-medium hover:bg-red-700 transition-colors"
                 >
                   Apply Filters
