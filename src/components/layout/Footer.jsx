@@ -21,9 +21,9 @@ export default async function Footer() {
               <Image
                 src="/logo-2.png"
                 alt="Ushnik Technologies Logo"
-                width={400}
-                height={120}
-                className="h-16 sm:h-20 w-auto object-contain"
+                width={500}
+                height={150}
+                className="h-24 sm:h-28 w-auto object-contain"
               />
             </Link>
             <p className="text-sm text-gray-400">
@@ -50,7 +50,7 @@ export default async function Footer() {
                 <span>{settings?.office_address || "8-2-269/3, Plot No: 3, 2nd Floor, Maharshi House, Banjara Hills Road No.2, Hyderabad, Telangana 500034"}</span>
               </p>
             </div>
-            
+
             <div className="pt-4 flex items-center space-x-4">
               {settings?.linkedin_url && (
                 <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-red transition-colors">
@@ -87,6 +87,7 @@ export default async function Footer() {
               <li><Link href="/software#staffing" className="hover:text-brand-red transition-colors">IT Staffing</Link></li>
               <li><Link href="/software#enterprise-it" className="hover:text-brand-red transition-colors">Enterprise IT</Link></li>
               <li><Link href="/software#mobile-apps" className="hover:text-brand-red transition-colors">Web & Mobile Apps</Link></li>
+              <li><a href="https://ushnik.in/allcourses" target="_blank" rel="noopener noreferrer" className="hover:text-brand-red transition-colors">Skill Development</a></li>
             </ul>
           </div>
 
@@ -117,6 +118,6 @@ export default async function Footer() {
           <p>Made in India</p>
         </div>
       </div>
-    </footer>
+    </footer >
   );
 }

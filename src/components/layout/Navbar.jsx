@@ -9,8 +9,9 @@ const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "Infrastructure Division", href: "/infrastructure" },
   { name: "Software Division", href: "/software" },
-  { name: "About Us", href: "/about" },
   { name: "Industries", href: "/industries" },
+  { name: "About Us", href: "/about" },
+  { name: "Careers", href: "/careers" },
   /*{ name: "Assessment Form", href: "/assessment" },*/
   { name: "Contact", href: "/contact" },
 ];
@@ -28,9 +29,9 @@ export default function Navbar() {
               <Image
                 src="/logo-1.png"
                 alt="Ushnik Technologies Logo"
-                width={400}
-                height={120}
-                className="h-14 sm:h-20 w-auto object-contain"
+                width={500}
+                height={150}
+                className="h-20 sm:h-24 w-auto object-contain"
                 priority
               />
             </Link>

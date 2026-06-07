@@ -38,9 +38,9 @@ export default function AdminLogin() {
           <Image
             src="/logo-1.png"
             alt="Ushnik Technologies"
-            width={180}
-            height={50}
-            className="object-contain mb-4"
+            width={240}
+            height={80}
+            className="object-contain mb-6"
             priority
           />
           <h1 className="font-heading font-bold text-xl text-brand-black mt-2">

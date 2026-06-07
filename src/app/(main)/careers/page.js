@@ -1,45 +1,185 @@
 import Link from "next/link";
-import { Users, Code, Server, ArrowRight } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import { Briefcase, MapPin, Clock, Search } from "lucide-react";
+import StaggerContainer, { StaggerItem } from "@/components/animations/StaggerContainer";
+import SlideUp from "@/components/animations/SlideUp";
+import ScaleOnHover from "@/components/animations/ScaleOnHover";
 
 export const metadata = {
   title: "Careers | Ushnik Technologies",
-  description: "Join Ushnik Technologies. We are always looking for top talent in software development, cybersecurity, and IT infrastructure.",
+  description: "Join our team of technology experts and innovators. Explore open positions at Ushnik Technologies.",
 };
 
-export default function CareersPage() {
-  return (
-    <div className="bg-brand-white min-h-screen py-16 lg:py-24">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl font-heading font-bold text-brand-black mb-6">Join Our Team</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We are building a dynamic team of technology professionals to support our infrastructure advisory and software development divisions.
-          </p>
-        </div>
+export default async function CareersPage({ searchParams }) {
+  const supabase = await createClient();
+  
+  const resolvedSearchParams = await searchParams;
+  const search = resolvedSearchParams?.search || '';
+  const department = resolvedSearchParams?.department || '';
+  const location = resolvedSearchParams?.location || '';
 
-        <div className="bg-brand-gray p-8 rounded-xl border border-gray-200 mb-12">
-          <h2 className="text-2xl font-bold text-brand-black mb-4">IT Staffing & Resource Augmentation</h2>
-          <p className="text-gray-600 mb-6">
-            In addition to internal roles, our Software Division actively recruits for technology staffing and contract hiring for our enterprise clients. If you are looking for project-based dedicated teams or remote-first placements, submit your profile to our talent pool.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center text-sm text-gray-700 font-medium">
-              <Code className="h-5 w-5 text-brand-red mr-3" /> Software Engineers & DevOps
-            </div>
-            <div className="flex items-center text-sm text-gray-700 font-medium">
-              <Server className="h-5 w-5 text-brand-red mr-3" /> Cloud Architects & Network Eng.
-            </div>
+  // Start query
+  let query = supabase
+    .from('jobs')
+    .select('*')
+    .eq('status', 'open')
+    .order('created_at', { ascending: false });
+
+  // Apply basic filters if any
+  if (search) {
+    query = query.ilike('title', `%${search}%`);
+  }
+  if (department) {
+    query = query.eq('department', department);
+  }
+  if (location) {
+    query = query.eq('location', location);
+  }
+
+  const { data: jobs, error } = await query;
+  
+  // Get unique departments and locations for filters
+  const { data: allJobs } = await supabase.from('jobs').select('department, location').eq('status', 'open');
+  const departments = [...new Set(allJobs?.map(j => j.department))].filter(Boolean);
+  const locations = [...new Set(allJobs?.map(j => j.location))].filter(Boolean);
+
+  return (
+    <div className="bg-brand-gray min-h-screen">
+      {/* PAGE HERO */}
+      <section className="bg-brand-black text-white py-20 lg:py-28">
+        <StaggerContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <StaggerItem>
+            <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">Join Our Mission</h1>
+          </StaggerItem>
+          <StaggerItem>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              Build the future of enterprise infrastructure, cybersecurity, and AI solutions with a team of passionate innovators.
+            </p>
+          </StaggerItem>
+        </StaggerContainer>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* Filters Sidebar */}
+          <div className="lg:w-1/4">
+            <SlideUp className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-24">
+              <h3 className="font-heading font-bold text-lg mb-6">Filter Roles</h3>
+              <form className="space-y-6" method="GET" action="/careers">
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input 
+                      type="text" 
+                      name="search"
+                      defaultValue={search}
+                      placeholder="Job title..."
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                {departments.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                    <select 
+                      name="department" 
+                      defaultValue={department}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-red focus:border-brand-red sm:text-sm"
+                    >
+                      <option value="">All Departments</option>
+                      {departments.map(dept => (
+                        <option key={dept} value={dept}>{dept}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {locations.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                    <select 
+                      name="location" 
+                      defaultValue={location}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-red focus:border-brand-red sm:text-sm"
+                    >
+                      <option value="">All Locations</option>
+                      {locations.map(loc => (
+                        <option key={loc} value={loc}>{loc}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <button 
+                  type="submit" 
+                  className="w-full bg-brand-red text-white py-2 rounded-md font-medium hover:bg-red-700 transition-colors"
+                >
+                  Apply Filters
+                </button>
+
+                {(search || department || location) && (
+                  <Link href="/careers" className="block text-center text-sm text-gray-500 hover:text-brand-red mt-2">
+                    Clear Filters
+                  </Link>
+                )}
+              </form>
+            </SlideUp>
+          </div>
+
+          {/* Job Listings */}
+          <div className="lg:w-3/4 space-y-4">
+            <h2 className="text-2xl font-heading font-bold mb-6">
+              {jobs?.length || 0} Open Roles {department && `in ${department}`}
+            </h2>
+
+            {error && (
+              <div className="bg-red-50 text-red-600 p-4 rounded-md">
+                Failed to load jobs. Please try again later.
+              </div>
+            )}
+
+            {!error && (!jobs || jobs.length === 0) ? (
+              <div className="bg-white p-10 rounded-xl border border-gray-200 text-center">
+                <Briefcase className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No open positions found</h3>
+                <p className="text-gray-500">We don't have any openings that match your criteria right now. Check back later!</p>
+              </div>
+            ) : (
+              <StaggerContainer className="space-y-4">
+                {jobs?.map((job) => (
+                  <StaggerItem key={job.id}>
+                    <ScaleOnHover>
+                      <Link href={`/careers/${job.id}`} className="block bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:border-brand-red hover:shadow-md transition-all group">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                          <div>
+                            <h3 className="text-xl font-heading font-bold text-brand-black group-hover:text-brand-red transition-colors mb-2">
+                              {job.title}
+                            </h3>
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                              <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4" /> {job.department}</span>
+                              <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {job.location}</span>
+                              <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> {job.employment_type}</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col sm:items-end gap-2 shrink-0">
+                            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
+                              {job.experience}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    </ScaleOnHover>
+                  </StaggerItem>
+                ))}
+              </StaggerContainer>
+            )}
           </div>
         </div>
-
-        <div className="text-center">
-          <h2 className="text-xl font-bold text-brand-black mb-4">Currently Open Positions</h2>
-          <p className="text-gray-600 mb-8">We are continually evaluating profiles. Send us your resume to be considered for upcoming roles and staffing projects.</p>
-          <a href="mailto:contact@ushniktechnologies.com?subject=Careers%20Application" className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-brand-red hover:bg-red-700 transition-colors">
-            Submit Your Resume <ArrowRight className="ml-2 h-4 w-4" />
-          </a>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

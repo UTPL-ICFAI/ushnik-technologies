@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Settings, Layers, Mails, LogOut, Menu, X, MessageSquare } from "lucide-react";
+import { LayoutDashboard, FileText, Settings, Layers, Mails, LogOut, Menu, X, MessageSquare, Briefcase } from "lucide-react";
 
 export default function AdminSidebar({ user }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +20,7 @@ export default function AdminSidebar({ user }) {
     { name: "Form Submissions", href: "/admin/forms", icon: Mails },
     { name: "Global Settings", href: "/admin/settings", icon: Settings },
     { name: "Chatbot CRM", href: "/admin/chatbot", icon: MessageSquare },
+    { name: "Careers", href: "/admin/careers", icon: Briefcase },
   ];
 
   return (
@@ -30,8 +31,8 @@ export default function AdminSidebar({ user }) {
           <Image
             src="/logo-1.png"
             alt="Ushnik Technologies"
-            width={120}
-            height={35}
+            width={160}
+            height={50}
             className="object-contain"
           />
         </Link>
@@ -63,9 +64,9 @@ export default function AdminSidebar({ user }) {
               <Image
                 src="/logo-2.png"
                 alt="Ushnik Technologies"
-                width={120}
-                height={30}
-                className="object-contain"
+                width={160}
+                height={50}
+                className="object-contain mb-1"
                 priority
               />
             </Link>

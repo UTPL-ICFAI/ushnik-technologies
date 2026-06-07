@@ -80,24 +80,24 @@ export default function AssessmentForm() {
                   <input
                     type="radio"
                     name="requirementType"
-                    value="new"
-                    checked={requirementType === "new"}
+                    value="existing"
+                    checked={requirementType === "existing"}
                     onChange={(e) => setRequirementType(e.target.value)}
                     className="h-5 w-5 text-brand-red focus:ring-brand-red border-gray-300"
                     required
                   />
-                  <span className="ml-3 text-gray-800 font-medium">Setting Up Infrastructure for a New Business / First-Time Deployment</span>
+                  <span className="ml-3 text-gray-800 font-medium">Optimizing or Migrating Existing Infrastructure</span>
                 </label>
                 <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
                   <input
                     type="radio"
                     name="requirementType"
-                    value="existing"
-                    checked={requirementType === "existing"}
+                    value="new"
+                    checked={requirementType === "new"}
                     onChange={(e) => setRequirementType(e.target.value)}
                     className="h-5 w-5 text-brand-red focus:ring-brand-red border-gray-300"
                   />
-                  <span className="ml-3 text-gray-800 font-medium">Optimizing or Migrating Existing Infrastructure</span>
+                  <span className="ml-3 text-gray-800 font-medium">Setting Up Infrastructure for a New Business / First-Time Deployment</span>
                 </label>
               </div>
             </div>
