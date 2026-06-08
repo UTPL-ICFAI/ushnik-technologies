@@ -91,11 +91,11 @@ export default function HeroForm({ hero }) {
         <input type="hidden" name="id" value={hero.id} />
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Heading (H1)</label>
-          <input
-            type="text"
+          <label className="block text-sm font-medium text-gray-700 mb-1">Heading (H1) <span className="font-normal text-gray-500">- Press Enter for a line break</span></label>
+          <textarea
             name="heading"
             defaultValue={hero.heading}
+            rows={3}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none"
             required
           />

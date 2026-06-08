@@ -40,7 +40,7 @@ export default async function Home() {
   return (
     <>
       {/* HERO SECTION - TAGLINE & VIDEO */}
-      <section className="relative bg-brand-black text-white pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden flex items-center justify-center min-h-[60vh]">
+      <section className="relative bg-brand-black text-white pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden flex items-center justify-center min-h-[75vh] md:min-h-[85vh] lg:min-h-[95vh]">
         {heroData?.is_video && heroData?.video_url ? (
           <>
             <video
@@ -65,7 +65,7 @@ export default async function Home() {
         
         <StaggerContainer className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <StaggerItem>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-tight sm:leading-tight md:leading-tight lg:leading-tight text-balance">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-tight sm:leading-tight md:leading-tight lg:leading-tight text-balance whitespace-pre-line">
               {heading}
             </h1>
           </StaggerItem>

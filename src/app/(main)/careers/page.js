@@ -46,7 +46,7 @@ export default async function CareersPage({ searchParams }) {
   return (
     <div className="bg-brand-gray min-h-screen">
       {/* PAGE HERO */}
-      <section className="bg-brand-black text-white py-20 lg:py-28">
+      <section className="bg-brand-black text-white pt-32 pb-20 lg:pt-40 lg:pb-28 min-h-[50vh] flex flex-col items-center justify-center">
         <StaggerContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <StaggerItem>
             <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">Join Our Mission</h1>

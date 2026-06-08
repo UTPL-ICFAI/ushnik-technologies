@@ -41,7 +41,7 @@ export default async function SoftwarePage() {
   return (
     <div className="bg-brand-white min-h-screen">
       {/* PAGE HERO */}
-      <section className="relative bg-brand-black text-white py-24 lg:py-32 overflow-hidden flex items-center justify-center min-h-[40vh]">
+      <section className="relative bg-brand-black text-white py-24 lg:py-32 overflow-hidden flex items-center justify-center min-h-[75vh] md:min-h-[85vh] lg:min-h-[95vh]">
         {heroData?.is_video && heroData?.video_url && (
           <>
             <video
@@ -58,7 +58,7 @@ export default async function SoftwarePage() {
         )}
         <StaggerContainer className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <StaggerItem>
-            <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
+            <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6 whitespace-pre-line">{heading}</h1>
           </StaggerItem>
           <StaggerItem>
             <p className="text-lg lg:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">

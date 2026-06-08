@@ -42,7 +42,7 @@ export default async function AboutPage() {
   return (
     <div className="bg-brand-white min-h-screen">
       {/* PAGE HERO */}
-      <section className="relative bg-brand-black text-white pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden text-center px-4">
+      <section className="relative bg-brand-black text-white py-24 lg:py-32 overflow-hidden flex flex-col items-center justify-center text-center px-4 min-h-[75vh] md:min-h-[85vh] lg:min-h-[95vh]">
         {heroData?.is_video && heroData?.video_url ? (
           <>
             <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0" src={heroData.video_url} />
@@ -58,7 +58,7 @@ export default async function AboutPage() {
         )}
         <StaggerContainer className="max-w-4xl mx-auto relative z-10">
           <StaggerItem>
-            <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6">{heading}</h1>
+            <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-6 whitespace-pre-line">{heading}</h1>
           </StaggerItem>
           <StaggerItem>
             <p className="text-lg lg:text-xl text-gray-400 leading-relaxed whitespace-pre-line">

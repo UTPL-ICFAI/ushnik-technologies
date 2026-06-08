@@ -16,7 +16,7 @@ export default async function ContactPage() {
   return (
     <div className="bg-brand-gray min-h-screen pb-20">
       {/* HEADER */}
-      <section className="bg-brand-black text-white py-16 text-center px-4">
+      <section className="bg-brand-black text-white pt-32 pb-24 min-h-[50vh] flex flex-col items-center justify-center text-center px-4">
         <StaggerContainer>
           <StaggerItem>
             <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-4">Contact Us</h1>

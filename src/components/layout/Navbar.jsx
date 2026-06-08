@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
@@ -18,20 +18,35 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-brand-white border-b border-gray-200">
+    <header 
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled 
+          ? "bg-brand-white border-b border-gray-200 shadow-sm" 
+          : "bg-transparent border-b border-transparent"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/">
               <Image
-                src="/logo-1.png"
+                src={isScrolled ? "/logo-1.png" : "/logo-2.png"}
                 alt="Ushnik Technologies Logo"
                 width={500}
                 height={150}
-                className="h-12 sm:h-14 w-auto object-contain"
+                className="h-12 sm:h-14 w-auto object-contain transition-opacity duration-300"
                 priority
               />
             </Link>
@@ -43,7 +58,11 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-gray-700 hover:text-brand-red transition-colors"
+                className={`text-sm font-medium transition-colors ${
+                  isScrolled 
+                    ? "text-gray-700 hover:text-brand-red" 
+                    : "text-gray-200 hover:text-white"
+                }`}
               >
                 {link.name}
               </Link>
@@ -63,7 +82,11 @@ export default function Navbar() {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-md text-gray-600 hover:text-brand-black hover:bg-gray-100 focus:outline-none"
+              className={`lg:hidden p-2 rounded-md focus:outline-none transition-colors ${
+                isScrolled
+                  ? "text-gray-600 hover:text-brand-black hover:bg-gray-100"
+                  : "text-white hover:bg-white/10"
+              }`}
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
