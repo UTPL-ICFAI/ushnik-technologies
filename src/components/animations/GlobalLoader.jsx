@@ -65,7 +65,7 @@ export default function GlobalLoader() {
             <img 
               src="/logo-2.png" 
               alt="Ushnik Technologies" 
-              className="w-[120px] sm:w-[160px] md:w-[200px] lg:w-[250px] h-auto mb-8"
+              className="w-[100px] sm:w-[140px] md:w-[160px] lg:w-[200px] h-auto mb-8"
             />
             <div className="w-48 md:w-64 h-[3px] bg-gray-800 rounded-full overflow-hidden">
               <motion.div 

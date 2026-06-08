@@ -23,7 +23,7 @@ export default async function Footer() {
                 alt="Ushnik Technologies Logo"
                 width={500}
                 height={150}
-                className="h-24 sm:h-28 w-auto object-contain"
+                className="h-12 sm:h-14 w-auto object-contain"
               />
             </Link>
             <p className="text-sm text-gray-400">
@@ -47,7 +47,7 @@ export default async function Footer() {
               </p>
               <p className="mt-4 flex items-start gap-2">
                 <span className="text-gray-500">📍</span>
-                <span>{settings?.office_address || "8-2-269/3, Plot No: 3, 2nd Floor, Maharshi House, Banjara Hills Road No.2, Hyderabad, Telangana 500034"}</span>
+                <span className="whitespace-pre-line">{settings?.office_address || "8-2-269/3, Plot No: 3, 2nd Floor, Maharshi House, Banjara Hills Road No.2, Hyderabad, Telangana 500034"}</span>
               </p>
             </div>
 

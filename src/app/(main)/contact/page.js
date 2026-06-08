@@ -54,7 +54,7 @@ export default async function ContactPage() {
                 <MapPin className="h-6 w-6 text-brand-red mr-4 mt-1" />
                 <div>
                   <p className="font-semibold mb-1">Registered Office</p>
-                  <p className="text-gray-400 leading-relaxed">{settings?.office_address || "8-2-269/3, Plot No: 3, 2nd Floor, Maharshi House, Banjara Hills Road No.2, Hyderabad, Telangana 500034"}</p>
+                  <p className="text-gray-400 leading-relaxed whitespace-pre-line">{settings?.office_address || "8-2-269/3, Plot No: 3, 2nd Floor, Maharshi House, Banjara Hills Road No.2, Hyderabad, Telangana 500034"}</p>
                 </div>
               </div>
               <div className="flex items-start">
