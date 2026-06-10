@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import ContactForm from "./ContactForm";
 import StaggerContainer, { StaggerItem } from "@/components/animations/StaggerContainer";
 import SlideUp from "@/components/animations/SlideUp";
+import SocialIconsList from "@/components/shared/SocialIconsList";
 
 export const metadata = {
   title: "Contact Us | Ushnik Technologies",
@@ -67,13 +68,8 @@ export default async function ContactPage() {
             </div>
             
             <div className="mt-12 pt-8 border-t border-gray-800">
-              {settings?.linkedin_url ? (
-                <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-brand-red hover:text-white transition-colors font-medium">
-                  Follow us on LinkedIn
-                </a>
-              ) : (
-                <span className="inline-flex items-center text-gray-500 font-medium">Connect with us on LinkedIn</span>
-              )}
+              <p className="font-semibold mb-6 text-gray-300">Connect With Us</p>
+              <SocialIconsList className="gap-x-2" />
             </div>
           </div>
 

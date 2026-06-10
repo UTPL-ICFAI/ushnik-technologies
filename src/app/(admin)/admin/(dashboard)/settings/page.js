@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import SettingsForm from "./SettingsForm";
+import SocialMediaManager from "./SocialMediaManager";
+import { getSocialMediaLinks } from "./socialActions";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -8,6 +10,8 @@ export default async function SettingsPage() {
     .from('global_settings')
     .select('*')
     .single();
+
+  const socialLinks = await getSocialMediaLinks();
 
   return (
     <div>
@@ -18,6 +22,10 @@ export default async function SettingsPage() {
 
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <SettingsForm initialData={settings} />
+      </div>
+
+      <div className="mt-8 bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <SocialMediaManager initialLinks={socialLinks} />
       </div>
     </div>
   );

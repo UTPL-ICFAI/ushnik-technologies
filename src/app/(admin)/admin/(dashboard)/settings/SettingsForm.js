@@ -82,26 +82,7 @@ export default function SettingsForm({ initialData }) {
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
-          <input
-            type="url"
-            name="linkedin_url"
-            defaultValue={initialData?.linkedin_url}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Twitter URL</label>
-          <input
-            type="url"
-            name="twitter_url"
-            defaultValue={initialData?.twitter_url}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-red focus:border-brand-red outline-none"
-          />
-        </div>
-      </div>
+
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Footer Copyright Text</label>

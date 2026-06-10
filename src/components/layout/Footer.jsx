@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/server";
+import SocialIconsList from "@/components/shared/SocialIconsList";
 
 export default async function Footer() {
   const supabase = await createClient();
@@ -51,17 +52,8 @@ export default async function Footer() {
               </p>
             </div>
 
-            <div className="pt-4 flex items-center space-x-4">
-              {settings?.linkedin_url && (
-                <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-red transition-colors">
-                  LinkedIn
-                </a>
-              )}
-              {settings?.twitter_url && (
-                <a href={settings.twitter_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-red transition-colors">
-                  Twitter
-                </a>
-              )}
+            <div className="pt-6">
+              <SocialIconsList />
             </div>
           </div>
 
